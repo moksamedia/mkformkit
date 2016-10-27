@@ -1,0 +1,42 @@
+{
+  "name": "formcomponents",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "compile": "babel src --out-dir lib",
+    "jest": "jest --no-cache  --verbose",
+    "postinstall": "node slinker-postinstall.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015-loose": "^8.0.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "enzyme": "^2.5.1",
+    "enzyme-to-json": "^1.1.5",
+    "jest": "^16.0.2",
+    "react-addons-test-utils": "^15.3.2",
+    "slinker": "^1.1.0"
+  },
+  "dependencies": {
+    "@sketchpixy/rubix": "^2.0.0",
+    "draft-js": "^0.9.1",
+    "lodash": "^4.16.4",
+    "react": "^15.3.2",
+    "react-addons-shallow-compare": "^15.3.2",
+    "react-dates": "^3.4.0",
+    "react-dom": "^15.3.2",
+    "react-moment-proptypes": "^1.2.0",
+    "react-tag-input": "^4.3.3"
+  },
+  "jest": {
+    "verbose": true,
+    "testRegex": "\\.(test|jest)\\.(js|jsx)$",
+    "testPathDirs": [
+      "__tests__"
+    ]
+  }
+}
