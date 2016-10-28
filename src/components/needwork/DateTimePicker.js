@@ -2,7 +2,7 @@
  * Created by cantgetnosleep on 10/4/16.
  */
 import React, {Component} from "react";
-import {FormGroup, FormControl, ControlLabel} from "@sketchpixy/rubix";
+import {FormGroup, FormControl, ControlLabel} from "./BaseFormElements";
 
 class DateTimePicker extends Component {
 
@@ -25,8 +25,9 @@ class DateTimePicker extends Component {
 
   render() {
     return (
-      <FormGroup controlId={this.props.formGroupId} >
-        <ControlLabel>{this.props.label}</ControlLabel>
+      <FormGroup controlId={this.props.formGroupId} validationState={validationState}>
+        <SwitchLabel {...this.props}/>
+        { helpBlock ? <HelpBlock>{helpBlock}</HelpBlock> : null }
         <div className='input-group date' id={this.props.componentId} >
           <input type='text' className="form-control" />
           <span className="input-group-addon">
@@ -40,7 +41,7 @@ class DateTimePicker extends Component {
 }
 
 DateTimePicker.propTypes = {
-  componentId: React.PropTypes.string.isRequired,
+  controlId: React.PropTypes.string.isRequired,
   formGroupId: React.PropTypes.string.isRequired,
   label: React.PropTypes.string.isRequired,
   options: React.PropTypes.object

@@ -6,6 +6,7 @@ import React from 'react';
 import {SingleDatePicker} from 'react-dates';
 
 class SingleDatePickerWrapper extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {

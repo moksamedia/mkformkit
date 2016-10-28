@@ -8,7 +8,7 @@ import {
   FormControl,
   InputGroup,
   HelpBlock
-} from '@sketchpixy/rubix';
+} from './BaseFormElements';
 
 import SwitchLabel from './SwitchLabel';
 
@@ -51,10 +51,14 @@ const ValidatedFormGroup = (props) => {
     usesInputGroup,
     preAddOn,
     postAddOn,
-    controlStyle
+    controlStyle,
+    visible
   } = props;
 
-  if (usesInputGroup) {
+  if (!visible) {
+    return null;
+  }
+  else if (usesInputGroup) {
     return (
 
       <FormGroupWrapper {...props}>
@@ -116,8 +120,9 @@ ValidatedFormGroup.propTypes = {
   inlineHelpBlock: React.PropTypes.string,
   helpBlock: React.PropTypes.string,
   formGroupStyle: React.PropTypes.object,
-  required:React.PropTypes.bool
-
+  required:React.PropTypes.bool,
+  formGroupClass: React.PropTypes.string,
+  formGroupId: React.PropTypes.string
 };
 
 ValidatedFormGroup.defaultProps = {
@@ -125,7 +130,8 @@ ValidatedFormGroup.defaultProps = {
   usesInputGroup:false,
   required:false,
   controlId:'',
-  type:'text'
+  type:'text',
+  visible:true
 };
 
 export default ValidatedFormGroup;

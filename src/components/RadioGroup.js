@@ -3,10 +3,13 @@
  */
 
 import React, { Component } from 'react';
+
 import {
   FormGroup,
-  Radio
-} from '@sketchpixy/rubix';
+  Radio,
+  HelpBlock
+} from './BaseFormElements';
+
 import _ from 'lodash';
 
 import SwitchLabel from './SwitchLabel';
@@ -59,20 +62,35 @@ class RadioGroup extends Component {
   }
 
   render() {
+
+    if (!this.props.visible) {
+      return false;
+    }
+
     let items = this.props.items;
-    let {controlId} = this.props;
+    let {
+      controlId,
+      formGroupClass,
+      formGroupId,
+      validationState,
+      helpBlock
+    } = this.props;
+
     return (
-      <FormGroup controlId={controlId} >
+      <FormGroup controlId={controlId} bsClass={formGroupClass} id={formGroupId} validationState={validationState} >
         <SwitchLabel {...this.props}/>
-        {items.map((item) => (
-          <RadioItem
-            key={item.value}
-            value={item.value}
-            text={item.text}
-            onChange={::this.handleChange}
-            checked={ _.includes(this.state.selectedValues, item.value) }
-          />
-        ))}
+        { helpBlock ? <HelpBlock>{helpBlock}</HelpBlock> : null }
+        <div id={controlId}>
+          {items.map((item) => (
+            <RadioItem
+              key={item.value}
+              value={item.value}
+              text={item.text}
+              onChange={::this.handleChange}
+              checked={ _.includes(this.state.selectedValues, item.value) }
+            />
+          ))}
+        </div>
       </FormGroup>
     );
 
@@ -81,18 +99,26 @@ class RadioGroup extends Component {
 }
 
 RadioGroup.propTypes = {
+  // required
   controlId: React.PropTypes.string.isRequired,
   label: React.PropTypes.string.isRequired,
   handleChange: React.PropTypes.func.isRequired,
-  allowsMultiple: React.PropTypes.bool,
   items: React.PropTypes.array.isRequired,
+  // optional
+  allowsMultiple: React.PropTypes.bool,
   validationState: React.PropTypes.string,
   validationMessage: React.PropTypes.string,
-  required: React.PropTypes.bool
+  required: React.PropTypes.bool,
+  visible: React.PropTypes.bool,
+  helpBlock: React.PropTypes.string,
+  inlineHelpBlock: React.PropTypes.string,
+  formGroupClass: React.PropTypes.string,
+  formGroupId: React.PropTypes.string
 };
 
 RadioGroup.defaultProps = {
-  allowsMultiple:false
+  allowsMultiple:false,
+  visible:true
 };
 
 export default RadioGroup;

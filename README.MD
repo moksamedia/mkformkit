@@ -10,5 +10,8 @@ This library is a combination of a ES6 form helper class that takes a form descr
 - postChangeHook to process value changes after validation logic and allow the setting of other state values in response to value changes (such as showing and hiding other elements)
 - descriptive form syntax removed from JSX that greatly cleans up from JSX
 - creation of other arbitrary form element state values
+- date range picker using react-dates
+- tag input using react-tag-input
+- compatible with Rubix react theme or React Bootstrap
 
 The library consists of the MKFormAssistant class that wraps all of the form logic, handling props and state and the various callbacks for changes, validation, and submission, and a a collection of React Bootstrap form element wrapper classes.

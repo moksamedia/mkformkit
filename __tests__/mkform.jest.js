@@ -20,7 +20,7 @@ import {
   Grid,
   Col,
   Well
-} from '@sketchpixy/rubix';
+} from '../src/components/BaseFormElements';
 
 
 let formDescription = {

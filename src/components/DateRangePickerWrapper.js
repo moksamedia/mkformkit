@@ -10,10 +10,12 @@ import SwitchLabel from './SwitchLabel';
 
 import {
   FormGroup
-} from '@sketchpixy/rubix';
+} from './BaseFormElements';
 
 class DateRangePickerWrapper extends React.Component {
+
   constructor(props) {
+
     super(props);
 
     if (props.value && _.has(props.value, 'start') && _.has(props.value, 'end')) {
@@ -39,7 +41,7 @@ class DateRangePickerWrapper extends React.Component {
     this.setState({ startDate, endDate });
     // only send update when both values are set
     if (startDate != null && endDate != null) {
-      this.props.onChange({ startDate, endDate });
+      this.props.handleChange({ startDate, endDate });
     }
   }
 
@@ -48,12 +50,18 @@ class DateRangePickerWrapper extends React.Component {
   }
 
   render() {
+
+    if (!this.props.visible) {
+      return false;
+    }
+
     const { focusedInput, startDate, endDate } = this.state;
     const {controlId, validationState, formGroupStyle, validationMessage} = this.props;
 
     return (
       <FormGroup validationState={validationState} style={formGroupStyle}>
-        <SwitchLabel label={this.props.label} required={this.props.required} validationMessage={validationMessage} />
+        <SwitchLabel {...this.props} />
+        { helpBlock ? <HelpBlock>{helpBlock}</HelpBlock> : null }
         <DateRangePicker
           id={controlId}
           onDatesChange={this.onDatesChange}
@@ -65,23 +73,32 @@ class DateRangePickerWrapper extends React.Component {
         />
       </FormGroup>
     );
+
   }
+
 }
 
 DateRangePickerWrapper.propTypes = {
   handleChange: React.PropTypes.func.isRequired,
   label: React.PropTypes.string.isRequired,
   validationState: React.PropTypes.bool,
-  formGroupStyle: React.PropTypes.string,
   validationMessage: React.PropTypes.string,
+  formGroupStyle: React.PropTypes.string,
   controlId: React.PropTypes.string,
   required: React.PropTypes.bool,
   startDate: momentPropTypes.momentObj,
   endDate: momentPropTypes.momentObj,
+  visible: React.PropTypes.bool,
+  helpBlock: React.PropTypes.string,
+  helpBlock: React.PropTypes.string,
+  inlineHelpBlock: React.PropTypes.string
 };
 
 DateRangePickerWrapper.defaultProps = {
-  required: false
+  required: false,
+  visible: true,
+  validationState: null,
+  validationMessage: null
 };
 
 

@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import {
   ControlLabel,
   HelpBlock
-} from '@sketchpixy/rubix';
+} from './BaseFormElements';
 
 import RequiredMarker from './RequiredMarker';
 
@@ -15,21 +15,28 @@ const InlineHelpBlock = ({text}) => (
   <HelpBlock className="inline-help-block">{"( " + text + " )"}</HelpBlock>
 );
 
-const SwitchLabel = ({label, validationMessage, inlineHelpBlock, required}) => {
+const SwitchLabel = ({
+  label,
+  validationMessage,
+  inlineHelpBlock,
+  required,
+  controlId
+}) => {
+
 
   if (validationMessage) {
     return (
-      <ControlLabel><RequiredMarker required={required}/>{`${label} ( ${validationMessage} )`}</ControlLabel>
+      <ControlLabel htmlFor={controlId}><RequiredMarker required={required}/>{`${label} ( ${validationMessage} )`}</ControlLabel>
     );
   }
   else if (inlineHelpBlock) {
     return (
-      <ControlLabel><RequiredMarker required={required}/>{label}<InlineHelpBlock text={inlineHelpBlock} /></ControlLabel>
+      <ControlLabel htmlFor={controlId}><RequiredMarker required={required}/>{label}<InlineHelpBlock text={inlineHelpBlock} /></ControlLabel>
     );
   }
   else {
     return (
-      <ControlLabel><RequiredMarker required={required}/>{label}</ControlLabel>
+      <ControlLabel htmlFor={controlId}><RequiredMarker required={required}/>{label}</ControlLabel>
     );
   }
 };
@@ -37,12 +44,15 @@ const SwitchLabel = ({label, validationMessage, inlineHelpBlock, required}) => {
 SwitchLabel.propTypes = {
   label: React.PropTypes.string.isRequired,
   validationMessage: React.PropTypes.string,
+  validationState: React.PropTypes.string,
   inlineHelpBlock: React.PropTypes.string,
+  controlId: React.PropTypes.string,
   required: React.PropTypes.bool
 };
 
 SwitchLabel.defaultProps = {
   validationMessage: null,
+  validationState: null,
   inlineHelpBlock: null,
   required: false
 };

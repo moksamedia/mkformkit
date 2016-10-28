@@ -8,7 +8,7 @@ import {
   FormGroup,
   ControlLabel,
   HelpBlock
-} from '@sketchpixy/rubix';
+} from './BaseFormElements';
 
 class TagInput extends Component {
 
@@ -27,18 +27,17 @@ class TagInput extends Component {
     let tags = this.state.tags;
     tags.splice(i, 1);
     this.setState({tags: tags});
-    this.props.onChange(tags);
+    this.props.handleChange(tags);
   }
 
   handleAddition(tag) {
-    console.log(this.state);
     let tags = this.state.tags;
     tags.push({
       id: tags.length + 1,
       text: tag
     });
     this.setState({tags: tags});
-    this.props.onChange(tags);
+    this.props.handleChange(tags);
   }
 
   handleDrag(tag, currPos, newPos) {
@@ -50,7 +49,7 @@ class TagInput extends Component {
 
     // re-render
     this.setState({ tags: tags });
-    this.props.onChange(tags);
+    this.props.handleChange(tags);
   }
 
   render() {
@@ -58,12 +57,11 @@ class TagInput extends Component {
     let tags = this.state.tags;
     let suggestions = this.state.suggestions;
     let controlId = this.props.controlId;
-    let label = this.props.label;
     let helpBlock = this.props.helpBlock;
 
     return (
-      <FormGroup>
-        <ControlLabel>{label}</ControlLabel>
+      <FormGroup controlId={controlId} validationState={validationState}>
+        <SwitchLabel {...this.props}/>
         { helpBlock ? <HelpBlock>{helpBlock}</HelpBlock> : null }
         <ReactTags
           id={controlId}
@@ -77,5 +75,27 @@ class TagInput extends Component {
     )
   }
 }
+
+TagInput.propTypes = {
+  controlId: React.PropTypes.string.isRequired,
+  label: React.PropTypes.string.isRequired,
+  helpBlock: React.PropTypes.string,
+  handleChange: React.PropTypes.func.isRequired,
+  items: React.PropTypes.array.isRequired,
+  required: React.PropTypes.bool,
+  visible: React.PropTypes.bool,
+  validationState: React.PropTypes.string,
+  validationMessage: React.PropTypes.string,
+  inlineHelpBlock: React.PropTypes.string
+};
+
+TagInput.defaultValues = {
+  required: false,
+  visible: true,
+  validationState: null,
+  validationMessage: null,
+  helpBlock: null
+};
+
 
 export default TagInput;
