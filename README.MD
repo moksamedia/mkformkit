@@ -39,3 +39,156 @@ TagInput
 ValidatedFormGroup
 - wraps react-bootstrap's FormGroup and FormControl to provide a text field and text area
 - supports pre- & post-addons
+
+### Example Form description
+
+~~~~
+
+// formDescription is passed to the MKFormAssistant object to setup
+// things like default values, initial values, pre- & post-change hooks
+// and if a form item is required
+
+let formDescription = {
+  name: {
+    validate: (value) => {
+      if (value.length > 5) {
+        return {state:'success', message:null};
+      }
+      else {
+        return {state:'error', message:"Too short!"};
+      }
+    },
+    required: true,
+    default: 'Your Name'
+  },
+  description: {
+    validate: (value) => {
+      return {state:'error', message:'Doh!'};
+    },
+    required: false,
+    default: '',
+    inputTransformer: (value) => {
+      return value.toUpperCase();
+    }
+  },
+  location: {
+    default: '',
+    postChangeHook:(value, set) => {
+      set(value.toLowerCase());
+    }
+  },
+  message: {
+    default: '',
+    postChangeHook:(value, set) => {
+      set("I'm setting the location value", 'location.value');
+    }
+  },
+  other: {
+    default:'',
+    postChangeHook:(value, set) => {
+      set(false, 'showShow.visible');
+    }
+  }
+};
+
+// Other state is merged with generated form state
+// but isn't processed by the form assistant
+
+let otherState = {
+  setShow: {
+    visible: true,
+    someVal: "It's a trap!"
+  }
+
+};
+
+~~~~
+
+### Example Form
+
+~~~~
+
+
+class TestForm extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.formAssistant = new MKFormAssistant(formDescription, otherState, this.handleSubmit, this);
+    this.formProps = this.formAssistant.formProps;
+    this.state = this.formAssistant.formState;
+    this.submitted = {};
+  }
+
+  handleSubmit(data) {
+    // for testing purposes
+    this.submitted = data;
+  };
+
+  render() {
+
+    return (
+      <Grid>
+        <Row>
+          <Col sm={12} smOffset={0} md={10} mdOffset={1}>
+            <PanelContainer id="retreat-create-panel" controls={false}>
+              <Panel>
+                <PanelBody style={{padding: 30}}>
+
+                  <Form id='retreat-create-form'>
+
+                    {/*
+                     GENERAL INFO
+                     */}
+
+                    <h3>General Info</h3>
+                    <Well>
+
+                      {/* NAME */}
+                      <ValidatedFormGroup
+                        label="Name"
+                        placeHolder="Choose a public name"
+                        {...this.formProps.name}
+                        {...this.state.name}
+                      />
+
+                      {/* LOCATION */}
+                      <ValidatedFormGroup
+                        label="Location"
+                        placeHolder="Where will the event be held?"
+                        {...this.formProps.location}
+                        {...this.state.location}
+                      />
+
+
+                      {/* DESCRIPTION */}
+                      <ValidatedFormGroup
+                        label="Description"
+                        inlineHelpBlock="Describe the experience in a couple paragraphs."
+                        placeHolder="This retreat is going to be..."
+                        componentClass="textarea"
+                        controlStyle={{height: "20em"}}
+                        {...this.formProps.description}
+                        {...this.state.description}
+                      />
+
+                    </Well>
+
+                    <FormGroup controlId="retreatCreateFormSubmit">
+                      <Button className="submit" type="submit" onClick={this.formProps.handleSubmit}>
+                        Submit
+                      </Button>
+                    </FormGroup>
+
+                  </Form>
+                </PanelBody>
+              </Panel>
+            </PanelContainer>
+          </Col>
+        </Row>
+      </Grid>
+    )
+  }
+
+};
+
+~~~~
