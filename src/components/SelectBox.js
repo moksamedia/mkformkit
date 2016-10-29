@@ -3,6 +3,9 @@
  */
 
 import React, { Component } from 'react';
+
+import COMMON_PROPS from './props';
+
 import {
   FormGroup,
   FormControl,
@@ -24,10 +27,11 @@ const SelectBox = (props) => {
     addNotAnswered,
     formGroupClass,
     formGroupId,
-    validationState
+    validationState,
+    visible
   } = props;
 
-  if (!props.visible) {
+  if (!visible) {
     return null;
   }
   else {
@@ -53,30 +57,16 @@ const SelectBox = (props) => {
 
 };
 
-SelectBox.propTypes = {
-  // required
-  controlId: React.PropTypes.string.isRequired,
-  handleChange: React.PropTypes.func.isRequired,
+SelectBox.propTypes = Object.assign({}, COMMON_PROPS.types, {
   items: React.PropTypes.array.isRequired,
-  label: React.PropTypes.string.isRequired,
-  //optional
-  required: React.PropTypes.bool,
-  inlineHelpBlock: React.PropTypes.string,
-  helpBlock: React.PropTypes.string,
-  addNotAnswered: React.PropTypes.bool,
-  visible: React.PropTypes.bool,
-  validationState: React.PropTypes.string,
-  validationMessage: React.PropTypes.string,
-  componentClass: React.PropTypes.string,
-  formGroupId: React.PropTypes.string,
-  formGroupClass: React.PropTypes.string,
   controlStyle: React.PropTypes.string,
+  componentClass: React.PropTypes.string,
   formGroupStyle: React.PropTypes.string,
-};
+  addNotAnswered: React.PropTypes.bool
+});
 
-SelectBox.defaultProps = {
-  addNotAnswered: false,
-  visible: true
-};
+SelectBox.defaultProps = Object.assign({}, COMMON_PROPS.defaults, {
+  addNotAnswered: false
+});
 
 export default SelectBox;

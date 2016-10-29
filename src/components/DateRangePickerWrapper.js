@@ -8,6 +8,8 @@ import {DateRangePicker} from 'react-dates';
 import momentPropTypes from 'react-moment-proptypes';
 import SwitchLabel from './SwitchLabel';
 
+import COMMON_PROPS from './props';
+
 import {
   FormGroup
 } from './BaseFormElements';
@@ -78,28 +80,12 @@ class DateRangePickerWrapper extends React.Component {
 
 }
 
-DateRangePickerWrapper.propTypes = {
-  handleChange: React.PropTypes.func.isRequired,
-  label: React.PropTypes.string.isRequired,
-  validationState: React.PropTypes.bool,
-  validationMessage: React.PropTypes.string,
-  formGroupStyle: React.PropTypes.string,
-  controlId: React.PropTypes.string,
-  required: React.PropTypes.bool,
+DateRangePickerWrapper.propTypes = Object.assign({}, COMMON_PROPS.types, {
   startDate: momentPropTypes.momentObj,
-  endDate: momentPropTypes.momentObj,
-  visible: React.PropTypes.bool,
-  helpBlock: React.PropTypes.string,
-  helpBlock: React.PropTypes.string,
-  inlineHelpBlock: React.PropTypes.string
-};
+  endDate: momentPropTypes.momentObj
+});
 
-DateRangePickerWrapper.defaultProps = {
-  required: false,
-  visible: true,
-  validationState: null,
-  validationMessage: null
-};
+DateRangePickerWrapper.defaultProps = COMMON_PROPS.defaults;
 
 
 export default DateRangePickerWrapper;

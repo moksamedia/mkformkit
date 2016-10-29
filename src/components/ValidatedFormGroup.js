@@ -3,6 +3,9 @@
  */
 
 import React, { Component } from 'react';
+
+import COMMON_PROPS from './props';
+
 import {
   FormGroup,
   FormControl,
@@ -23,14 +26,16 @@ const FormGroupWrapper = (props) => {
     formGroupStyle,
     inlineHelpBlock,
     helpBlock,
-    required
+    required,
+    formGroupClass,
+    formGroupId
   } = props;
 
   controlId = controlId ? controlId : label.toLowerCase().replace(/\s+/g, '-');
 
   return (
 
-    <FormGroup controlId={controlId} validationState={validationState} style={formGroupStyle}>
+    <FormGroup controlId={controlId} bsClass={formGroupClass} id={formGroupId} validationState={validationState} style={formGroupStyle}>
       { label ? <SwitchLabel label={label} validationMessage={validationMessage} inlineHelpBlock={inlineHelpBlock} required={required} /> : null }
         { helpBlock ? <HelpBlock>{helpBlock}</HelpBlock>  : null }
         {props.children}
@@ -39,6 +44,7 @@ const FormGroupWrapper = (props) => {
   );
 
 };
+
 
 const ValidatedFormGroup = (props) => {
 
@@ -99,16 +105,8 @@ const ValidatedFormGroup = (props) => {
 
 };
 
-ValidatedFormGroup.propTypes = {
-
-  // Required
-  label: React.PropTypes.string,
-  handleChange: React.PropTypes.func.isRequired,
-
+ValidatedFormGroup.propTypes = Object.assign({}, COMMON_PROPS.types, {
   // Optional
-  controlId: React.PropTypes.string,
-  validationState: React.PropTypes.string,
-  validationMessage: React.PropTypes.string,
   type: React.PropTypes.string,
   placeHolder: React.PropTypes.string,
   value: React.PropTypes.string,
@@ -117,21 +115,13 @@ ValidatedFormGroup.propTypes = {
   preAddOn: React.PropTypes.string,
   postAddOn: React.PropTypes.string,
   controlStyle: React.PropTypes.object,
-  inlineHelpBlock: React.PropTypes.string,
-  helpBlock: React.PropTypes.string,
   formGroupStyle: React.PropTypes.object,
-  required:React.PropTypes.bool,
-  formGroupClass: React.PropTypes.string,
-  formGroupId: React.PropTypes.string
-};
+});
 
-ValidatedFormGroup.defaultProps = {
+ValidatedFormGroup.defaultProps = Object.assign({}, COMMON_PROPS.defaults, {
   componentClass:'input',
-  usesInputGroup:false,
-  required:false,
   controlId:'',
-  type:'text',
-  visible:true
-};
+  type:'text'
+});
 
 export default ValidatedFormGroup;

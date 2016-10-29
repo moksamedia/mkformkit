@@ -4,6 +4,8 @@
 
 import React, { Component } from 'react';
 
+import COMMON_PROPS from './props';
+
 import {
   FormGroup,
   Checkbox,
@@ -102,25 +104,10 @@ class CheckboxGroup2Column extends Component {
 
 }
 
-CheckboxGroup2Column.propTypes = {
-  // required
-  controlId: React.PropTypes.string.isRequired,
-  label: React.PropTypes.string.isRequired,
-  handleChange: React.PropTypes.func.isRequired,
-  items: React.PropTypes.array.isRequired,
-  // optional
-  required: React.PropTypes.bool,
-  visible: React.PropTypes.bool,
-  validationState: React.PropTypes.string,
-  validationMessage: React.PropTypes.string,
-  helpBlock: React.PropTypes.string,
-  inlineHelpBlock: React.PropTypes.string,
-  formGroupClass: React.PropTypes.string,
-  formGroupId: React.PropTypes.string
-};
+CheckboxGroup2Column.propTypes = Object.assign({}, COMMON_PROPS.types, {
+  items: React.PropTypes.array.isRequired
+});
 
-CheckboxGroup2Column.defaultProps = {
-  visible: true
-};
+CheckboxGroup2Column.defaultProps = COMMON_PROPS.defaults;
 
 export default CheckboxGroup2Column;

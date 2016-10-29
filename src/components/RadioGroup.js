@@ -4,6 +4,8 @@
 
 import React, { Component } from 'react';
 
+import COMMON_PROPS from './props';
+
 import {
   FormGroup,
   Radio,
@@ -98,27 +100,13 @@ class RadioGroup extends Component {
 
 }
 
-RadioGroup.propTypes = {
-  // required
-  controlId: React.PropTypes.string.isRequired,
-  label: React.PropTypes.string.isRequired,
-  handleChange: React.PropTypes.func.isRequired,
+RadioGroup.propTypes = Object.assign({}, COMMON_PROPS.types, {
   items: React.PropTypes.array.isRequired,
-  // optional
-  allowsMultiple: React.PropTypes.bool,
-  validationState: React.PropTypes.string,
-  validationMessage: React.PropTypes.string,
-  required: React.PropTypes.bool,
-  visible: React.PropTypes.bool,
-  helpBlock: React.PropTypes.string,
-  inlineHelpBlock: React.PropTypes.string,
-  formGroupClass: React.PropTypes.string,
-  formGroupId: React.PropTypes.string
-};
+  allowsMultiple: React.PropTypes.bool
+});
 
-RadioGroup.defaultProps = {
-  allowsMultiple:false,
-  visible:true
-};
+RadioGroup.defaultProps = Object.assign({}, COMMON_PROPS.defaults, {
+  allowsMultiple:false
+});
 
 export default RadioGroup;

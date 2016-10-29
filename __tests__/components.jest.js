@@ -13,6 +13,7 @@ import {
   CheckboxGroup,
   CheckboxGroup2Column,
   RadioGroup,
+  ValidatedFormGroup,
   SelectBox
 } from '../src';
 
@@ -87,6 +88,68 @@ let checkInlineHelpBlock = (wrapper, text) => {
   expect(wrapper.find('.inline-help-block').text()).toContain(text);
 };
 
+let simulateChange = (component, value) => {
+  component.simulate('change', {target: {value: value}});
+};
+
+
+// Runs common test for form component
+// - visible
+// - required
+// - validationState and validationMessage
+// - help blocks
+
+let checkElement = (element, props) => {
+
+  // Check visible
+  it('Returns nothing if not visible', () => {
+    props.visible = false;
+    checkNotVisible(shallow(React.createElement(element, props)));
+    props.visible = true;
+  });
+
+  // Required
+  it('Shows required marker if required', () => {
+    props.required = true;
+    checkIsRequired(shallow(React.createElement(element, props)));
+    props.required = false;
+    checkNotRequired(shallow(React.createElement(element, props)));
+    props.required = false;
+  });
+
+  // Validation
+  it('Shows validation state and message', () => {
+    // state
+    props.validationState = 'error';
+    checkHasValidationError(mount(React.createElement(element, props)));
+    props.validationState = 'warning';
+    checkHasValidationWarning(mount(React.createElement(element, props)));
+    props.validationState = 'success';
+    checkHasValidationSuccess(mount(React.createElement(element, props)));
+    props.validationState = null;
+    checkHasNoValidationClass(mount(React.createElement(element, props)));
+    // message in label
+    props.validationMessage = "Validate!";
+    checkValidationMessageContains(mount(React.createElement(element, props)), props.validationMessage);
+    props.validationMessage = null;
+  });
+
+  // Help blocks
+  it('Shows help block and inline help block', () => {
+    // help block
+    props.helpBlock = 'Help me...';
+    checkHelpBlock(mount(React.createElement(element, props)), props.helpBlock);
+    props.helpBlock = null;
+    // inline help block
+    props.inlineHelpBlock = 'Help me...inline';
+    checkInlineHelpBlock(mount(React.createElement(element, props)), props.inlineHelpBlock);
+    props.inlineHelpBlock = null;
+  });
+
+};
+
+// CheckBoxGroup
+
 describe('CheckBoxGroup', () => {
 
   let handleChange = (e) => {
@@ -128,54 +191,11 @@ describe('CheckBoxGroup', () => {
 
   });
 
-  // Check visible
-  it('Returns nothing if not visible', () => {
-    props.visible = false;
-    checkNotVisible(shallow(<CheckboxGroup {...props} />));
-    props.visible = true;
-  });
-
-   // Required
-  it('Shows required marker if required', () => {
-    props.required = true;
-    checkIsRequired(shallow(<CheckboxGroup {...props} />));
-    props.required = false;
-    checkNotRequired(shallow(<CheckboxGroup {...props} />));
-    props.required = false;
-  });
-
-  // Validation
-  it('Shows validation state and message', () => {
-    // state
-    props.validationState = 'error';
-    checkHasValidationError(mount(<CheckboxGroup {...props} />));
-    props.validationState = 'warning';
-    checkHasValidationWarning(mount(<CheckboxGroup {...props} />));
-    props.validationState = 'success';
-    checkHasValidationSuccess(mount(<CheckboxGroup {...props} />));
-    props.validationState = null;
-    checkHasNoValidationClass(mount(<CheckboxGroup {...props} />));
-    // message in label
-    props.validationMessage = "Validate!";
-    checkValidationMessageContains(mount(<CheckboxGroup {...props} />), props.validationMessage);
-    props.validationMessage = null;
-  });
-
-  // Help blocks
-  it('Shows help block and inline help block', () => {
-    // help block
-    props.helpBlock = 'Help me...';
-    checkHelpBlock(mount(<CheckboxGroup {...props} />), props.helpBlock);
-    props.helpBlock = null;
-    // inline help block
-    props.inlineHelpBlock = 'Help me...inline';
-    checkInlineHelpBlock(mount(<CheckboxGroup {...props} />), props.inlineHelpBlock);
-    props.inlineHelpBlock = null;
-  });
-
+  checkElement(CheckboxGroup, props);
 
 });
 
+// CheckBoxGroup2Column
 
 describe('CheckBoxGroup2Column', () => {
 
@@ -218,54 +238,12 @@ describe('CheckBoxGroup2Column', () => {
 
   });
 
-  // Check visible
-  it('Returns nothing if not visible', () => {
-    props.visible = false;
-    checkNotVisible(shallow(<CheckboxGroup2Column {...props} />));
-    props.visible = true;
-  });
-
-  // Required
-  it('Shows required marker if required', () => {
-    props.required = true;
-    checkIsRequired(shallow(<CheckboxGroup2Column {...props} />));
-    props.required = false;
-    checkNotRequired(shallow(<CheckboxGroup2Column {...props} />));
-    props.required = false;
-  });
-
-  // Validation
-  it('Shows validation state and message', () => {
-    // state
-    props.validationState = 'error';
-    checkHasValidationError(mount(<CheckboxGroup2Column {...props} />));
-    props.validationState = 'warning';
-    checkHasValidationWarning(mount(<CheckboxGroup2Column {...props} />));
-    props.validationState = 'success';
-    checkHasValidationSuccess(mount(<CheckboxGroup2Column {...props} />));
-    props.validationState = null;
-    checkHasNoValidationClass(mount(<CheckboxGroup2Column {...props} />));
-    // message in label
-    props.validationMessage = "Validate!";
-    checkValidationMessageContains(mount(<CheckboxGroup2Column {...props} />), props.validationMessage);
-    props.validationMessage = null;
-  });
-
-  // Help blocks
-  it('Shows help block and inline help block', () => {
-    // help block
-    props.helpBlock = 'Help me...';
-    checkHelpBlock(mount(<CheckboxGroup2Column {...props} />), props.helpBlock);
-    props.helpBlock = null;
-    // inline help block
-    props.inlineHelpBlock = 'Help me...inline';
-    checkInlineHelpBlock(mount(<CheckboxGroup2Column {...props} />), props.inlineHelpBlock);
-    props.inlineHelpBlock = null;
-  });
+  checkElement(CheckboxGroup2Column, props);
 
 });
 
 
+// RadioGroup
 
 describe('RadioGroup', () => {
 
@@ -309,54 +287,12 @@ describe('RadioGroup', () => {
 
   });
 
-  // Check visible
-  it('Returns nothing if not visible', () => {
-    props.visible = false;
-    checkNotVisible(shallow(<RadioGroup {...props} />));
-    props.visible = true;
-  });
-
-  // Required
-  it('Shows required marker if required', () => {
-    props.required = true;
-    checkIsRequired(shallow(<RadioGroup {...props} />));
-    props.required = false;
-    checkNotRequired(shallow(<RadioGroup {...props} />));
-    props.required = false;
-  });
-
-  // Validation
-  it('Shows validation state and message', () => {
-    // state
-    props.validationState = 'error';
-    checkHasValidationError(mount(<RadioGroup {...props} />));
-    props.validationState = 'warning';
-    checkHasValidationWarning(mount(<RadioGroup {...props} />));
-    props.validationState = 'success';
-    checkHasValidationSuccess(mount(<RadioGroup {...props} />));
-    props.validationState = null;
-    checkHasNoValidationClass(mount(<RadioGroup {...props} />));
-    // message in label
-    props.validationMessage = "Validate!";
-    checkValidationMessageContains(mount(<RadioGroup {...props} />), props.validationMessage);
-    props.validationMessage = null;
-  });
-
-  // Help blocks
-  it('Shows help block and inline help block', () => {
-    // help block
-    props.helpBlock = 'Help me...';
-    checkHelpBlock(mount(<RadioGroup {...props} />), props.helpBlock);
-    props.helpBlock = null;
-    // inline help block
-    props.inlineHelpBlock = 'Help me...inline';
-    checkInlineHelpBlock(mount(<RadioGroup {...props} />), props.inlineHelpBlock);
-    props.inlineHelpBlock = null;
-  });
+  checkElement(RadioGroup, props);
 
 });
 
 
+// SelectBox
 
 describe('SelectBox', () => {
 
@@ -375,7 +311,8 @@ describe('SelectBox', () => {
       {value:"D", text:"D"}
     ],
     formGroupClass: "myClass",
-    formGroupId: "myId"
+    formGroupId: "myId",
+    visible:true
   };
 
   it('Can render with required props', () => {
@@ -417,49 +354,50 @@ describe('SelectBox', () => {
     props.addNotAnswered = false;
   });
 
-  // Check visible
-  it('Returns nothing if not visible', () => {
-    props.visible = false;
-    checkNotVisible(shallow(<SelectBox {...props} />));
-    props.visible = true;
-  });
-
-  // Required
-  it('Shows required marker if required', () => {
-    props.required = true;
-    checkIsRequired(shallow(<SelectBox {...props} />));
-    props.required = false;
-    checkNotRequired(shallow(<SelectBox {...props} />));
-    props.required = false;
-  });
-
-  // Validation
-  it('Shows validation state and message', () => {
-    // state
-    props.validationState = 'error';
-    checkHasValidationError(mount(<SelectBox {...props} />));
-    props.validationState = 'warning';
-    checkHasValidationWarning(mount(<SelectBox {...props} />));
-    props.validationState = 'success';
-    checkHasValidationSuccess(mount(<SelectBox {...props} />));
-    props.validationState = null;
-    checkHasNoValidationClass(mount(<SelectBox {...props} />));
-    // message in label
-    props.validationMessage = "Validate!";
-    checkValidationMessageContains(mount(<SelectBox {...props} />), props.validationMessage);
-    props.validationMessage = null;
-  });
-
-  // Help blocks
-  it('Shows help block and inline help block', () => {
-    // help block
-    props.helpBlock = 'Help me...';
-    checkHelpBlock(mount(<SelectBox {...props} />), props.helpBlock);
-    props.helpBlock = null;
-    // inline help block
-    props.inlineHelpBlock = 'Help me...inline';
-    checkInlineHelpBlock(mount(<SelectBox {...props} />), props.inlineHelpBlock);
-    props.inlineHelpBlock = null;
-  });
+  checkElement(RadioGroup, props);
 
 });
+
+
+// ValidatedFormGroup
+
+describe('ValidatedFormGroup', () => {
+
+  let handleChange = (e) => {
+    console.log(e.target.value);
+  };
+
+  var props = {
+    controlId: "aComponent",
+    label: "A label",
+    handleChange: handleChange,
+    value:"This is the value",
+    formGroupClass: "myClass",
+    formGroupId: "myId"
+  };
+
+  it('Can render with required props', () => {
+
+    var wrapper = mount(<ValidatedFormGroup {...props} />);
+
+    expect(wrapper.find(`#${props.controlId}`).length).toBe(1);
+
+    // form group
+    expect(wrapper.find(`.${props.formGroupClass}`).length).toBe(1);
+    expect(wrapper.find(`.${props.formGroupClass}`).is(`#${props.formGroupId}`)).toBeTruthy();
+
+    // control label
+    let controlLabel = wrapper.find('label.control-label');
+    expect(controlLabel.text()).toEqual(props.label);
+    expect(controlLabel.is(`[htmlFor="${props.controlId}"]`)).toBeTruthy();
+
+    expect(wrapper.find('input.form-control').html()).toEqual("<input type=\"text\" value=\"This is the value\" id=\"aComponent\" class=\"form-control\">");
+
+  });
+
+  checkElement(ValidatedFormGroup, props);
+
+});
+
+
+// TODO: DateRangePickerWrapper, TagInput
