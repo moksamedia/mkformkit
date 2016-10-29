@@ -15,3 +15,27 @@ This library is a combination of a ES6 form helper class that takes a form descr
 - compatible with Rubix react theme or React Bootstrap
 
 The library consists of the MKFormAssistant class that wraps all of the form logic, handling props and state and the various callbacks for changes, validation, and submission, and a a collection of React Bootstrap form element wrapper classes.
+
+### Form Elements
+
+CheckboxGroup
+- a group of CheckboxItems
+
+CheckboxGroup2Column
+- like CheckboxGroup, but splits the checkboxes into two columns for better layout
+
+RadioGroup
+- a list of RadioItems that can allow multiple select
+
+SelectBox
+- dropdown select box with a list of options
+
+DateRangePickerWrapper
+- uses react-dates to wrap a control for selecting a range of dates
+
+TagInput
+- wraps react-tag-input to provide a nice interface for inputting tags
+
+ValidatedFormGroup
+- wraps react-bootstrap's FormGroup and FormControl to provide a text field and text area
+- supports pre- & post-addons
