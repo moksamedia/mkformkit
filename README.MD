@@ -49,30 +49,38 @@ ValidatedFormGroup
 The form description is a javascript object with key / object pairs that contain the attributes that describe each form element or item. The form item name must be unique and cannot clash with any other state or prop entries. Form state and props will be created using this name.
 ~~~~
 
-<form item name> : {
-    value:
-      - an initial value for the item
-      - string or array (for items that allow multiple values)
-    required:
-      - is a validated and non-null and non-empty value required to submit the form
-      - boolean
-    default:
-      - what is the default value for the item (used as the initial state if value isn't specified)
-      - string or array
-    visible:
-      - is the item visible (can be used to show and hide the item dynamically)
-      - boolean
-    validate:
-      - called by handleChange to return new validation state
-      - function, returns { state:<new state>, message:<new message> }
-      - state is one of 'success', 'error', or null
-      - message is any string
-    inputTransformer
-      - called by handleChange before validation, passed the new value
-      - function, returns a transformed value to be validated
-    postChangeHook:
-      - called by handleChange after validation, passed the new value, a function used to set a path on the state, and the new state
-      - function, returns nothing but can be used to set arbitrary values in the state based on user input
+formDescription: {
+
+  ...
+
+  <form item name> : {
+      value:
+        - an initial value for the item
+        - string or array (for items that allow multiple values)
+      required:
+        - is a validated and non-null and non-empty value required to submit the form
+        - boolean
+      default:
+        - what is the default value for the item (used as the initial state if value isn't specified)
+        - string or array
+      visible:
+        - is the item visible (can be used to show and hide the item dynamically)
+        - boolean
+      validate:
+        - called by handleChange to return new validation state
+        - function, returns { state:<new state>, message:<new message> }
+        - state is one of 'success', 'error', or null
+        - message is any string
+      inputTransformer
+        - called by handleChange before validation, passed the new value
+        - function, returns a transformed value to be validated
+      postChangeHook:
+        - called by handleChange after validation, passed the new value, a function used to set a path on the state, and the new state
+        - function, returns nothing but can be used to set arbitrary values in the state based on user input
+  }
+
+  ...
+  
 }
 
 ~~~~
