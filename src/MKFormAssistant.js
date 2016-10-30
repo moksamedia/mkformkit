@@ -131,8 +131,8 @@ export default class MKFormAssistant {
     return formItemState.validationState == null || formItemState.validationState == 'success';
   }
 
-  formItemFulfillsRequired(formItemState) {
-    return this.formItemIsValid(formItemState) && formItemState.value != null && formItemState.value != '';
+  formItemFulfillsRequired(formItemState, formItemName) {
+    return this.formItemIsValid(formItemState) && formItemState.value != null && formItemState.value != '' && formItemState.value != this.defaultValues[formItemName];
   }
 
   // Handle submit iterates through form state and extracts the
@@ -161,7 +161,7 @@ export default class MKFormAssistant {
         invalidFormItemNames += [key];
       }
 
-      if (this.formProps[key].required && !this.formItemFulfillsRequired(currentState[key])) {
+      if (this.formProps[key].required && !this.formItemFulfillsRequired(currentState[key],key)) {
         invalidFormItemNames += [key];
       }
 

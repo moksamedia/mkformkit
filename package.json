@@ -1,6 +1,6 @@
 {
   "name": "moksa-form-components",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "",
   "main": "lib/index.js",
   "author": "Andrew Hughes (www.moksamedia.com)",
@@ -25,20 +25,20 @@
     "slinker": "^1.1.0"
   },
   "dependencies": {
-    "draft-js":"^0.9.1",
-    "lodash":"^4.16.4",
-    "react":"^15.3.2",
-    "react-addons-shallow-compare":"^15.3.2",
-    "react-bootstrap":"^0.30.5",
-    "react-dates":"^3.4.0",
-    "react-dom":"^15.3.2",
-    "react-moment-proptypes":"^1.2.0",
-    "react-tag-input":"^4.3.3",
-    "source-map-loader":"^0.1.5"
+    "draft-js": "^0.9.1",
+    "lodash": "^4.16.4",
+    "react": "^15.3.2",
+    "react-addons-shallow-compare": "^15.3.2",
+    "react-bootstrap": "^0.30.5",
+    "react-dates": "^3.4.0",
+    "react-dom": "^15.3.2",
+    "react-moment-proptypes": "^1.2.0",
+    "react-tag-input": "^4.4.0",
+    "source-map-loader": "^0.1.5"
   },
   "jest": {
-    "verbose":true,
-    "testRegex":"\\.(test|jest)\\.(js|jsx)$",
+    "verbose": true,
+    "testRegex": "\\.(test|jest)\\.(js|jsx)$",
     "testPathDirs": [
       "__tests__"
     ]

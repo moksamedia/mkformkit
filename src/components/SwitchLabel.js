@@ -23,8 +23,10 @@ const SwitchLabel = ({
   controlId
 }) => {
 
-
-  if (validationMessage) {
+  if (label == null) {
+    return null
+  }
+  else if (validationMessage) {
     return (
       <ControlLabel htmlFor={controlId}><RequiredMarker required={required}/>{`${label} ( ${validationMessage} )`}</ControlLabel>
     );

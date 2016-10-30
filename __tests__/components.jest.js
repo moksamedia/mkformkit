@@ -14,7 +14,8 @@ import {
   CheckboxGroup2Column,
   RadioGroup,
   ValidatedFormGroup,
-  SelectBox
+  SelectBox,
+  TagInput
 } from '../src';
 
 import {
@@ -399,5 +400,41 @@ describe('ValidatedFormGroup', () => {
 
 });
 
+describe('TagInput', () => {
 
-// TODO: DateRangePickerWrapper, TagInput
+  let handleChange = (e) => {
+    console.log(e.target.value);
+  };
+
+  var props = {
+    controlId: "aComponent",
+    label: "A label",
+    handleChange: handleChange,
+    formGroupClass: "myClass",
+    formGroupId: "myId"
+  };
+
+  it('Can render with required props', () => {
+
+    var wrapper = mount(<TagInput {...props} />);
+
+    expect(wrapper.find(`#${props.controlId}`).length).toBe(1);
+
+    // form group
+    expect(wrapper.find(`.${props.formGroupClass}`).length).toBe(1);
+    expect(wrapper.find(`.${props.formGroupClass}`).is(`#${props.formGroupId}`)).toBeTruthy();
+
+    // control label
+    let controlLabel = wrapper.find('label.control-label');
+    expect(controlLabel.text()).toEqual(props.label);
+    expect(controlLabel.is(`[htmlFor="${props.controlId}"]`)).toBeTruthy();
+
+  });
+
+  checkElement(TagInput, props);
+
+
+});
+
+
+// TODO: DateRangePickerWrapper

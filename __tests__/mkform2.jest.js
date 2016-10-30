@@ -7,7 +7,14 @@ import { mountToJson } from 'enzyme-to-json';
 
 import React from 'react';
 
-import {ValidatedFormGroup, MKFormAssistant, Alert} from '../src';
+import {
+  ValidatedFormGroup,
+  MKFormAssistant,
+  Alert,
+  SelectBox,
+  TagInput,
+  CheckboxGroup2Column
+} from '../src';
 
 import {
   Form,
@@ -22,6 +29,7 @@ import {
   Well
 } from '../src/components/BaseFormElements';
 
+import {prettyPrintHtmlFromWrapper} from './testutils';
 
 let formDescription = {
 
@@ -38,24 +46,22 @@ let formDescription = {
     default: 'Your Name'
   },
 
-  description: {
-    validate: (value) => {
-      if (value.length < 10) return {state:'error', message:'Doh!'};
-      else return {state:'success', message:null};
-    },
-    required: false,
-    default: '',
-    inputTransformer: (value) => {
-      return value.toUpperCase();
-    }
-  },
-
   tags: {
-    required:false
+    validate: (value) => {
+      if (value.length > 1) {
+        return {state:'success', message:null};
+      }
+      else {
+        return {state:'error', message:"Must include at least 2 tags"};
+      }
+    },
+    required:true,
+    visible: true
   },
 
   eventVisibility: {
-    required:true
+    required:false,
+    default:'notAnswered'
   },
 
   affiliation: {
@@ -69,7 +75,7 @@ class TestForm extends React.Component {
 
   constructor(props) {
     super(props);
-    new MKFormAssistant(formDescription, this);
+    this.formAssistant = new MKFormAssistant(formDescription, this);
     this.submitted = {};
   }
 
@@ -88,93 +94,73 @@ class TestForm extends React.Component {
   render() {
 
     return (
-      <Grid>
-        <Row>
-          <Col sm={12} smOffset={0} md={10} mdOffset={1}>
-            <PanelContainer id="retreat-create-panel" controls={false}>
-              <Panel>
-                <PanelBody style={{padding: 30}}>
+      <Form id='create-form'>
 
-                  <Form id='retreat-create-form'>
+        {/*
+         GENERAL INFO
+         */}
 
-                    {/*
-                     GENERAL INFO
-                     */}
+        <h3>General Info</h3>
+        <Well>
 
-                    <h3>General Info</h3>
-                    <Well>
+          {/* RETREAT NAME */}
+          <ValidatedFormGroup
+            label="Name"
+            placeHolder="Choose a public name for your retreat"
+            {...this.formProps.name}
+            {...this.state.name}
+          />
 
-                      {/* RETREAT NAME */}
-                      <ValidatedFormGroup
-                        label="Name"
-                        placeHolder="Choose a public name for your retreat"
-                        {...this.formProps.name}
-                        {...this.state.name}
-                      />
+          <SelectBox
+            controlId="eventVisibility"
+            label="Pick who can see the event."
+            addNotAnswered={true}
+            items={[
+              {value:"anyone", text:"Anyone on the website, including anonymous users (contact info will still be hidden)"},
+              {value:"registered", text:"Registered users only"},
+              {value:"link", text:"Only people with a direct link"},
+              {value:"invite", text:"Only registered users that I've invited"},
+            ]}
+            {...this.formProps.eventVisibility}
+            {...this.state.eventVisibility}
+          />
 
-                      <ValidatedFormGroup
-                        label="Description"
-                        inlineHelpBlock="Describe the experience in a couple paragraphs."
-                        placeHolder="This event is going to be..."
-                        componentClass="textarea"
-                        controlStyle={{height: "20em"}}
-                        {...this.formProps.description}
-                        {...this.state.description}
-                      />
+          <TagInput
+            controlId="tags"
+            label="Sub-Affiliation"
+            helpBlock="These are searchable tags."
+            {...this.formProps.tags}
+            {...this.state.tags}
+          />
 
-                      <SelectBox
-                        controlId="eventVisibility"
-                        label="Pick who can see the event."
-                        addNotAnswered={true}
-                        items={[
-                          {value:"anyone", text:"Anyone on the website, including anonymous users (contact info will still be hidden)"},
-                          {value:"registered", text:"Registered users only"},
-                          {value:"link", text:"Only people with a direct link"},
-                          {value:"invite", text:"Only registered users that I've invited"},
-                        ]}
-                        {...props.eventVisibility}
-                      />
+          <CheckboxGroup2Column
+            controlId="affiliation"
+            label="Pick an affiliation"
+            items={[
+              {value: "a", text: "A"},
+              {value: "b", text: "B"},
+              {value: "c", text: "C"},
+              {value: "d", text: "D"}
+            ]}
+            {...this.formProps.affiliation}
+            {...this.state.affiliation}
+          />
 
-                      <TagInput
-                        controlId="tags"
-                        label="Sub-Affiliation"
-                        helpBlock="These are searchable tags."
-                        {...props.tags}
-                      />
+        </Well>
 
-                      <CheckboxGroup2Column
-                        controlId="affiliation"
-                        label="Pick an affiliation"
-                        items={[
-                          {value: "a", text: "A"},
-                          {value: "b", text: "B"},
-                          {value: "c", text: "C"},
-                          {value: "d", text: "D"}
-                        ]}
-                        {...props.affiliation}
-                      />
+        <Alert
+          controlId="alert"
+          style="warning"
+          {...this.state.alert}
+        />
 
-                    </Well>
+        <FormGroup controlId="retreatCreateFormSubmit">
+          <Button className="submit" type="submit" onClick={this.formProps.handleSubmit}>
+            Submit
+          </Button>
+        </FormGroup>
 
-                    <Alert
-                      controlId="alert"
-                      style="warning"
-                      {...this.state.alert}
-                    />
-
-                    <FormGroup controlId="retreatCreateFormSubmit">
-                      <Button className="submit" type="submit" onClick={this.formProps.handleSubmit}>
-                        Submit
-                      </Button>
-                    </FormGroup>
-
-                  </Form>
-                </PanelBody>
-              </Panel>
-            </PanelContainer>
-          </Col>
-        </Row>
-      </Grid>
+      </Form>
     )
   }
 
@@ -192,127 +178,70 @@ describe('TestForm + FormAssistant state and props', () => {
     let formProps = testForm.formProps;
 
     expect(formProps.name.required).toBe(true);
-    expect(formProps.location.required).toBe(false);
-    expect(formProps.description.required).toBe(false);
+    expect(formProps.tags.required).toBe(true);
+    expect(formProps.eventVisibility.required).toBe(false);
+    expect(formProps.affiliation.required).toBe(true);
 
     expect(typeof formProps.handleSubmit === "function").toBeTruthy();
     expect(typeof formProps.name.handleChange === "function").toBeTruthy();
-    expect(typeof formProps.description.handleChange === "function").toBeTruthy();
-    expect(typeof formProps.location.handleChange === "function").toBeTruthy();
-
+    expect(typeof formProps.tags.handleChange === "function").toBeTruthy();
+    expect(typeof formProps.eventVisibility.handleChange === "function").toBeTruthy();
+    expect(typeof formProps.affiliation.handleChange === "function").toBeTruthy();
 
     expect(formAssistant.callbacks.name.validate).toBe(formDescription.name.validate);
-    expect(formAssistant.callbacks.description.validate).toBe(formDescription.description.validate);
-    expect(formAssistant.callbacks.location.validate).toBe(null);
+    expect(formAssistant.callbacks.tags.validate).toBe(formDescription.tags.validate);
+    expect(formAssistant.callbacks.eventVisibility.validate).toBe(null);
+    expect(formAssistant.callbacks.affiliation.validate).toBe(null);
 
     expect(formAssistant.defaultValues.name).toBe("Your Name");
-    expect(formAssistant.defaultValues.description).toBe("");
-    expect(formAssistant.defaultValues.location).toBe("");
 
   });
 
-  it('can change values in both formAssitant.formState and component.state', () => {
+  it('can change values of name', () => {
     formAssistant.handleChange('name', 'My Name');
     expect(wrapper.state('name').value).toEqual("My Name");
   });
 
-  it('post change hooks works with set(value)', () => {
-    formAssistant.handleChange('location', 'MixedCaseTOWN');
-    expect(wrapper.state('location').value).toEqual("mixedcasetown");
-  });
+  it('can change values of tags', () => {
 
+    formAssistant.handleChange('tags', ['tag1', 'tag2', 'tag3']);
+    expect(wrapper.state('tags').value).toEqual(['tag1', 'tag2', 'tag3']);
 
-  it('post change hooks works with set(value, path)', () => {
-    formAssistant.handleChange('message', 'Hello');
-    expect(wrapper.state('location').value).toEqual("I'm setting the location value");
-    expect(wrapper.state('message').value).toEqual("Hello");
-  });
-
-  it('can validate values', () => {
-
-    // Too short, error
-    formAssistant.handleChange('name', 'Abc');
-    expect(wrapper.state('name').value).toEqual("Abc");
-    expect(wrapper.state('name').validationState).toEqual("error");
-    expect(wrapper.state('name').validationMessage).toEqual("Too short!");
-
-    // OK
-    formAssistant.handleChange('name', 'Alongenough Name');
-    expect(wrapper.state('name').value).toEqual("Alongenough Name");
-    expect(wrapper.state('name').validationState).toEqual("success");
-    expect(wrapper.state('name').validationMessage).toBe(null);
+    formAssistant.handleChange('tags', ['ABC', 'DEF']);
+    expect(wrapper.state('tags').value).toEqual(['ABC', 'DEF']);
 
   });
 
-  it('can transform inputs with an input transformer', () => {
+  it('can change values of select box', () => {
 
-    formAssistant.handleChange('description', 'hello');
-    expect(wrapper.state('description').value).toBe("HELLO");
+    expect(wrapper.state('eventVisibility').value).toEqual('notAnswered');
+
+    formAssistant.handleChange('eventVisibility', 'registered');
+    expect(wrapper.state('eventVisibility').value).toEqual('registered');
+
+    formAssistant.handleChange('eventVisibility', 'invite');
+    expect(wrapper.state('eventVisibility').value).toEqual('invite');
+  });
+
+  it('can change values of checkbox', () => {
+
+    expect(wrapper.state('affiliation').value).toBeUndefined();
+
+    formAssistant.handleChange('affiliation', ['a','b']);
+    expect(wrapper.state('affiliation').value).toEqual(['a','b']);
 
   });
 
-  it('merges other state', () => {
+  it('can validate tags', () => {
 
-    expect(wrapper.state('shouldShow')).toEqual({
-      visible: true,
-      someVal: "It's a trap!"
-    });
+    formAssistant.handleChange('tags', ['tag1']);
+    expect(wrapper.state('tags').validationState).toEqual('error');
+    expect(wrapper.state('tags').validationMessage).toEqual("Must include at least 2 tags");
 
-    expect(wrapper.state('submitted')).toEqual({
-      data: null,
-      isSubmitted: false
-    });
+    formAssistant.handleChange('tags', ['tag1', 'tag2']);
+    expect(wrapper.state('tags').validationState).toEqual('success');
+    expect(wrapper.state('tags').validationMessage).toEqual(null);
 
   });
-
-  it('postChangeHook set() can update merged other state values', () => {
-
-    formAssistant.handleChange('other', "it just doesn't matter");
-    expect(wrapper.state('shouldShow').visible).toBe(false);
-
-  });
-
-
-});
-
-
-let simulateChange = (component, value) => {
-  component.simulate('change', {target: {value: value}});
-};
-
-describe('TestForm: on change handlers', () => {
-
-  const wrapper = mount(<TestForm />);
-  let testForm = wrapper.instance();
-  let formAssistant = testForm.formAssistant;
-
-  it('Can call onChange event to update state', () => {
-
-    let name = wrapper.find('#name');
-
-    simulateChange(name, "Andrew Hughes");
-    expect(name.get(0).value).toEqual("Andrew Hughes");
-
-    let description = wrapper.find('#description');
-
-    simulateChange(description, "What a wonderful world");
-    expect(description.get(0).value).toBe("WHAT A WONDERFUL WORLD");
-
-    let location = wrapper.find('#location');
-
-    simulateChange(location, "Bobville, Colorado");
-    expect(location.get(0).value).toBe("bobville, colorado");
-
-    wrapper.find('.submit').simulate('click');
-
-    expect(testForm.submitted).toEqual({ name: 'Andrew Hughes',
-      description: 'WHAT A WONDERFUL WORLD',
-      location: 'bobville, colorado',
-      message: '',
-      other: ''
-    });
-
-  });
-
-
+  
 });

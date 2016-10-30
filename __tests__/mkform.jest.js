@@ -109,71 +109,50 @@ class TestForm extends React.Component {
   render() {
 
     return (
-      <Grid>
-        <Row>
-          <Col sm={12} smOffset={0} md={10} mdOffset={1}>
-            <PanelContainer id="retreat-create-panel" controls={false}>
-              <Panel>
-                <PanelBody style={{padding: 30}}>
+      <Form id='create-form'>
 
-                  <Form id='retreat-create-form'>
+        <h3>General Info</h3>
+        <Well>
 
-                    {/*
-                     GENERAL INFO
-                     */}
+          <ValidatedFormGroup
+            label="Name"
+            placeHolder="Choose a public name for your retreat"
+            {...this.formProps.name}
+            {...this.state.name}
+          />
 
-                    <h3>General Info</h3>
-                    <Well>
+          <ValidatedFormGroup
+            label="Location"
+            placeHolder="Where will the retreat be held?"
+            {...this.formProps.location}
+            {...this.state.location}
+          />
 
-                      {/* RETREAT NAME */}
-                      <ValidatedFormGroup
-                        label="Name"
-                        placeHolder="Choose a public name for your retreat"
-                        {...this.formProps.name}
-                        {...this.state.name}
-                      />
+          <ValidatedFormGroup
+            label="Description"
+            inlineHelpBlock="Describe the retreat experience in a couple paragraphs."
+            placeHolder="This retreat is going to be..."
+            componentClass="textarea"
+            controlStyle={{height: "20em"}}
+            {...this.formProps.description}
+            {...this.state.description}
+          />
 
-                      {/* LOCATION */}
-                      <ValidatedFormGroup
-                        label="Location"
-                        placeHolder="Where will the retreat be held?"
-                        {...this.formProps.location}
-                        {...this.state.location}
-                      />
+        </Well>
 
+        <Alert
+          controlId="alert"
+          style="warning"
+          {...this.state.alert}
+        />
 
-                      {/* DESCRIPTION */}
-                      <ValidatedFormGroup
-                        label="Description"
-                        inlineHelpBlock="Describe the retreat experience in a couple paragraphs."
-                        placeHolder="This retreat is going to be..."
-                        componentClass="textarea"
-                        controlStyle={{height: "20em"}}
-                        {...this.formProps.description}
-                        {...this.state.description}
-                      />
+        <FormGroup controlId="retreatCreateFormSubmit">
+          <Button className="submit" type="submit" onClick={this.formProps.handleSubmit}>
+            Submit
+          </Button>
+        </FormGroup>
 
-                    </Well>
-
-                    <Alert
-                      controlId="alert"
-                      style="warning"
-                      {...this.state.alert}
-                    />
-
-                    <FormGroup controlId="retreatCreateFormSubmit">
-                      <Button className="submit" type="submit" onClick={this.formProps.handleSubmit}>
-                        Submit
-                      </Button>
-                    </FormGroup>
-
-                  </Form>
-                </PanelBody>
-              </Panel>
-            </PanelContainer>
-          </Col>
-        </Row>
-      </Grid>
+      </Form>
     )
   }
 

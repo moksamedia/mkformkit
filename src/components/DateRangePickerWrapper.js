@@ -57,11 +57,22 @@ class DateRangePickerWrapper extends React.Component {
       return false;
     }
 
-    const { focusedInput, startDate, endDate } = this.state;
-    const {controlId, validationState, formGroupStyle, validationMessage} = this.props;
+    const {
+      focusedInput,
+      startDate,
+      endDate } = this.state;
+
+    const {
+      controlId,
+      formGroupClass,
+      formGroupId,
+      formGroupStyle,
+      helpBlock,
+      validationState
+    } = this.props;
 
     return (
-      <FormGroup validationState={validationState} style={formGroupStyle}>
+      <FormGroup controlId={controlId} validationState={validationState} bsClass={formGroupClass} id={formGroupId} style={formGroupStyle}>
         <SwitchLabel {...this.props} />
         { helpBlock ? <HelpBlock>{helpBlock}</HelpBlock> : null }
         <DateRangePicker
