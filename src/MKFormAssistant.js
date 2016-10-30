@@ -39,11 +39,23 @@ export default class MKFormAssistant {
     handleSubmitCallback: the callback that the form assistant calls with the form values
     component: the React form component
    */
-  constructor(formDescription, otherState, handleSubmitCallback, component) {
+  constructor(formDescription, component, options) {
 
-    this.handleSubmitCallback = handleSubmitCallback.bind(component);
     this.component = component;
     this.formDescription = formDescription;
+
+    if (_.has(options, 'handleSubmit')) {
+      this.handleSubmitCallback = options.handleSubmit.bind(component);
+    }
+    else {
+      this.handleSubmitCallback = component.handleSubmit.bind(component);
+    }
+
+    let otherState = {};
+
+    if (_.has(options, 'otherState')) {
+      otherState = options.otherState;
+    }
 
     // the the setState function and bind to the component
     this.setStateFn = component.setState.bind(component);

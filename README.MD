@@ -20,6 +20,81 @@ It is written to work with React Bootstrap, but might be useful with other form 
 
 The library consists of the MKFormAssistant class that wraps all of the form logic, handling props and state and the various callbacks for changes, validation, and submission, and a a collection of React Bootstrap form element wrapper classes.
 
+### Motivation
+
+Building a web application with a lot of forms using React Bootstrap I noticed that I was creating a lot of repeated boilerplate code that could be unified and simplified. Each element had a lot of common functionality, such as validation, change handling, visibility, etc...
+
+This library is how I simplified and unified the form creation process using React Bootstrap. It consists of a form assistant class that wraps up a lot of common functions and logic, and some wrapper classes around the React Bootstrap form elements. To create a form you write a formDescription that tells the form assistant (MKFormAssistant) about the form you are creating, and you pass this to the MKFormAssistant in the constructor of the React element for your form. You then use the bundled form element items in your form and pass them the generated initial state and the formProps.
+
+~~~~
+
+let formDescription = {
+
+  name: {
+    validate: (value) => {
+      if (value.length > 5) {
+        return {state:'success', message:null};
+      }
+      else {
+        return {state:'error', message:"Too short!"};
+      }
+    },
+    required: true,
+    default: 'Your Name'
+  }
+
+};
+
+
+class TestForm extends React.Component {
+
+  constructor(props) {
+    super(props);
+    new MKFormAssistant(formDescription, this);
+    this.submitted = {};
+  }
+
+  handleSubmit(status, data) {
+
+    if (status.success) {
+      // validation passed, handle data
+    }
+    else {
+      // validation failed
+    }
+
+  };
+
+  render() {
+
+    return (
+
+      <Form id='create-form'>
+
+        {/* NAME */}
+        <ValidatedFormGroup
+          label="Name"
+          placeHolder="Choose a public name for your event"
+          {...this.formProps.name}
+          {...this.state.name}
+        />
+
+        <FormGroup controlId="formSubmit">
+          <Button className="submit" type="submit" onClick={this.formProps.handleSubmit}>
+            Submit
+          </Button>
+        </FormGroup>
+
+      </Form>
+
+    )
+
+  }
+
+};
+
+~~~~
+
 ### Form Elements
 
 CheckboxGroup

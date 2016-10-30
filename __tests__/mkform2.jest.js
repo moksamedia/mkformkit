@@ -69,7 +69,7 @@ class TestForm extends React.Component {
 
   constructor(props) {
     super(props);
-    this.formAssistant = new MKFormAssistant(formDescription, otherState, this.handleSubmit, this);
+    new MKFormAssistant(formDescription, this);
     this.submitted = {};
   }
 
