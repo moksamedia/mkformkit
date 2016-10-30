@@ -26,6 +26,8 @@ Building a web application with a lot of forms using React Bootstrap I noticed t
 
 This library is how I simplified and unified the form creation process using React Bootstrap. It consists of a form assistant class that wraps up a lot of common functions and logic, and some wrapper classes around the React Bootstrap form elements. To create a form you write a formDescription that tells the form assistant (MKFormAssistant) about the form you are creating, and you pass this to the MKFormAssistant in the constructor of the React element for your form. You then use the bundled form element items in your form and pass them the generated initial state and the formProps.
 
+### A very simple example
+
 ~~~~
 
 let formDescription = {
@@ -51,7 +53,6 @@ class TestForm extends React.Component {
   constructor(props) {
     super(props);
     new MKFormAssistant(formDescription, this);
-    this.submitted = {};
   }
 
   handleSubmit(status, data) {
