@@ -1,6 +1,6 @@
 {
   "name": "moksa-form-components",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "lib/index.js",
   "author": "Andrew Hughes (www.moksamedia.com)",
@@ -22,19 +22,20 @@
     "pretty": "^1.0.0",
     "react-addons-test-utils": "^15.3.2",
     "sinon": "^1.17.6",
-    "slinker": "^1.1.0"
+    "slinker": "^1.1.0",
+    "react-addons-shallow-compare": "^15.3.2",
+    "source-map-loader": "^0.1.5"
+  },
+  "peerDependencies": {
+    "react": "^15.3.2",
+    "react-bootstrap": "^0.30.5"
   },
   "dependencies": {
     "draft-js": "^0.9.1",
     "lodash": "^4.16.4",
-    "react": "^15.3.2",
-    "react-addons-shallow-compare": "^15.3.2",
-    "react-bootstrap": "^0.30.5",
     "react-dates": "^3.4.0",
-    "react-dom": "^15.3.2",
     "react-moment-proptypes": "^1.2.0",
-    "react-tag-input": "^4.4.0",
-    "source-map-loader": "^0.1.5"
+    "react-tag-input": "^4.4.0"
   },
   "jest": {
     "verbose": true,
