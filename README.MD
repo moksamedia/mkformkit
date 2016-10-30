@@ -47,6 +47,7 @@ ValidatedFormGroup
 ### Form description schema
 
 The form description is a javascript object with key / object pairs that contain the attributes that describe each form element or item. The form item name must be unique and cannot clash with any other state or prop entries. Form state and props will be created using this name.
+
 ~~~~
 
 formDescription: {
@@ -80,10 +81,55 @@ formDescription: {
   }
 
   ...
-  
+
 }
 
 ~~~~
+
+## Notes on callback functions
+
+**validate**: called by handleChange when onChange fires. May be null or not specified, in which case the form item is unvalidated and any value is accepted. Is passed the new value, and must return an object with state = ('error' | 'success' | null) and message = "Any arbitrary string". If state is null, this will clear any validation decoration.
+
+**inputTransformer**: passed the new value, pre-validation, and can return a transformed value
+
+**postChangeHook**: passed the new value, post-validation, as well as a set() function that can be used to update the state and the new state itself.
+
+`postChangeHook(newValue, set, newState)`
+
+set() is a closure that can be used to make arbitrary updates to the form element state. It can be called with a value and path, in which case the path in the state is set to the value, or just a value, in which case the path is assumed to be the current form item's value.
+
+`set(value, path)` -> set any arbitrary path in the state to value
+`set(value)` -> set value of current form item to value
+
+### handleChange
+
+You do not need to specify a change handler for form elements. This is created automatically and injected into the formProps for each form item, which is passed to the item using the spread operator, typically: `{...this.formProps.<item name>}`
+
+### state and formProps
+
+When you create the MKFormAssistant object in the form element constructor, the initial state and the formProps are set on the form element object for you automatically.
+
+~~~~
+
+constructor(props) {
+  super(props);
+  this.formAssistant = new MKFormAssistant(formDescription, otherState, this.handleSubmit, this);
+  // state and formProps are generated and injected into form element and can
+  // be used in render method
+}
+
+~~~~
+
+formProps for each form item contains two fields:
+- required
+- handleChange
+
+the form state for each item contains:
+- value
+- visible
+- validationState
+- validationMessage
+
 
 ### Example Form description
 
