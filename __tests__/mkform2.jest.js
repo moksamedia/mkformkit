@@ -50,39 +50,18 @@ let formDescription = {
     }
   },
 
-  location: {
-    default: '',
-    postChangeHook:(value, set) => {
-      set(value.toLowerCase());
-    }
+  tags: {
+    required:false
   },
-  message: {
-    default: '',
-    postChangeHook:(value, set) => {
-      set("I'm setting the location value", 'location.value');
-    }
-  },
-  other: {
-    default:'',
-    postChangeHook:(value, set) => {
-      set(false, 'shouldShow.visible');
-    }
-  }
-};
 
-let otherState = {
-  shouldShow: {
-    visible: true,
-    someVal: "It's a trap!"
+  eventVisibility: {
+    required:true
   },
-  submitted: {
-    data: null,
-    isSubmitted: false
-  },
-  alert: {
-    message:'',
-    visible:false
+
+  affiliation: {
+    required:true
   }
+
 };
 
 
@@ -133,24 +112,46 @@ class TestForm extends React.Component {
                         {...this.state.name}
                       />
 
-                      {/* LOCATION */}
-                      <ValidatedFormGroup
-                        label="Location"
-                        placeHolder="Where will the retreat be held?"
-                        {...this.formProps.location}
-                        {...this.state.location}
-                      />
-
-
-                      {/* DESCRIPTION */}
                       <ValidatedFormGroup
                         label="Description"
-                        inlineHelpBlock="Describe the retreat experience in a couple paragraphs."
-                        placeHolder="This retreat is going to be..."
+                        inlineHelpBlock="Describe the experience in a couple paragraphs."
+                        placeHolder="This event is going to be..."
                         componentClass="textarea"
                         controlStyle={{height: "20em"}}
                         {...this.formProps.description}
                         {...this.state.description}
+                      />
+
+                      <SelectBox
+                        controlId="eventVisibility"
+                        label="Pick who can see the event."
+                        addNotAnswered={true}
+                        items={[
+                          {value:"anyone", text:"Anyone on the website, including anonymous users (contact info will still be hidden)"},
+                          {value:"registered", text:"Registered users only"},
+                          {value:"link", text:"Only people with a direct link"},
+                          {value:"invite", text:"Only registered users that I've invited"},
+                        ]}
+                        {...props.eventVisibility}
+                      />
+
+                      <TagInput
+                        controlId="tags"
+                        label="Sub-Affiliation"
+                        helpBlock="These are searchable tags."
+                        {...props.tags}
+                      />
+
+                      <CheckboxGroup2Column
+                        controlId="affiliation"
+                        label="Pick an affiliation"
+                        items={[
+                          {value: "a", text: "A"},
+                          {value: "b", text: "B"},
+                          {value: "c", text: "C"},
+                          {value: "d", text: "D"}
+                        ]}
+                        {...props.affiliation}
                       />
 
                     </Well>

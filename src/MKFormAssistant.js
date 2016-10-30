@@ -41,23 +41,22 @@ export default class MKFormAssistant {
    */
   constructor(formDescription, otherState, handleSubmitCallback, component) {
 
-    this.formDescription = formDescription;
-    this.otherState = otherState;
     this.handleSubmitCallback = handleSubmitCallback.bind(component);
     this.component = component;
+    this.formDescription = formDescription;
 
     // the the setState function and bind to the component
     this.setStateFn = component.setState.bind(component);
 
     this.formProps = {};
     this.callbacks = {};
-    this.formState = {};
+    let formState = {}; // we don't maintain the state here once it's built
     this.defaultValues = {};
 
     // iterate over formDescription building/collecting the necessary state, props, default values, and callbacks
     // necessary for managing the form
 
-    _.forIn(this.formDescription, (formItemValues, formItemName) => {
+    _.forIn(formDescription, (formItemValues, formItemName) => {
 
       // make sure the form item has only valid keys
       this.checkFormDescriptionKeys(formItemValues);
@@ -65,12 +64,12 @@ export default class MKFormAssistant {
       ///////////////////////////////////////
       // Form state
 
-      this.formState[formItemName] = {};
+      formState[formItemName] = {};
 
-      this.formState[formItemName].validationState = null;
-      this.formState[formItemName].validationMessage = null;
-      this.formState[formItemName].value = _.has(formItemValues, 'value') ? formItemValues.value : formItemValues.default;
-      this.formState[formItemName].visible = _.has(formItemValues, 'visible') ? formItemValues.visible : true;
+      formState[formItemName].validationState = null;
+      formState[formItemName].validationMessage = null;
+      formState[formItemName].value = _.has(formItemValues, 'value') ? formItemValues.value : formItemValues.default;
+      formState[formItemName].visible = _.has(formItemValues, 'visible') ? formItemValues.visible : true;
 
       ///////////////////////////////////////
       // Form props
@@ -99,19 +98,30 @@ export default class MKFormAssistant {
     });
 
     // Merge other state with form state and check for clash
-    _.forIn(this.otherState, (obj, key) => {
-      if (_.has(this.formState, key)) {
+    _.forIn(otherState, (obj, key) => {
+      if (_.has(formState, key)) {
         throw new Error("Other state should not contain a key that overwrites form state. Key = " + key);
       }
-      this.formState[key] = obj;
+      formState[key] = obj;
     });
 
     this.formProps.handleSubmit = ::this.handleSubmitInternal;
+
+    component.state = formState;
+    component.formProps = this.formProps;
 
   }
 
   ///////////////////////////////////////
   // HANDLE SUBMIT
+
+  formItemIsValid(formItemState) {
+    return formItemState.validationState == null || formItemState.validationState == 'success';
+  }
+
+  formItemFulfillsRequired(formItemState) {
+    return this.formItemIsValid(formItemState) && formItemState.value != null && formItemState.value != '';
+  }
 
   // Handle submit iterates through form state and extracts the
   // values as results
@@ -119,16 +129,38 @@ export default class MKFormAssistant {
 
     e.preventDefault();
 
+    /*
+        Make sure all form items with values pass validation
+        Make sure all required items have valid values
+        If valid, extract data and call submit callback with data
+        It NOT valid, show alert and show item validationMessages
+     */
+
+    let invalidFormItemNames = [];
+
     // CHECK VALIDATION
-    _.forIn(this.formState, (value, key) => {
+    _.forIn(this.formDescription, (value, key) => {
       // TODO: need to finish validation and check required state
       //console.log(key +": " + JSON.stringify(value));
+
+      let currentState = this.component.state;
+
+      if (!this.formItemIsValid(currentState[key])) {
+        invalidFormItemNames += [key];
+      }
+
+      if (this.formProps[key].required && !this.formItemFulfillsRequired(currentState[key])) {
+        invalidFormItemNames += [key];
+      }
+
     });
 
     // PACKAGE RESULTS
     let results = this.getValuesFromFormState();
 
-    this.handleSubmitCallback(results);
+
+
+    this.handleSubmitCallback({ success: invalidFormItemNames.length == 0, invalidFormItemNames: invalidFormItemNames}, results);
 
   };
 
@@ -137,7 +169,7 @@ export default class MKFormAssistant {
 
     let results = {};
 
-    _.forIn(this.formState, (formItemAttributes, formItemName) => {
+    _.forIn(this.component.state, (formItemAttributes, formItemName) => {
 
       if (_.has(formItemAttributes, 'value')) {
         results[formItemName] = formItemAttributes.value;
