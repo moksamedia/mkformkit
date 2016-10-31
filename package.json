@@ -1,34 +1,57 @@
 {
   "name": "moksa-form-components",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "",
   "main": "lib/index.js",
   "author": "Andrew Hughes (www.moksamedia.com)",
   "homepage": "https://github.com/moksamedia/mkformkit",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moksamedia/mkformkit"
+  },
   "scripts": {
-    "compile": "babel src --out-dir lib",
-    "jest": "jest --no-cache  --verbose"
+    "jest": "jest --no-cache  --verbose",
+    "build": "rimraf lib && npm run build:css && webpack --mode=build",
+    "build:css": "node-sass css/styles.scss lib/styles.css"
   },
   "license": "ISC",
   "devDependencies": {
     "babel-cli": "^6.18.0",
+    "babel-eslint": "^7.1.0",
+    "babel-loader": "^6.2.7",
     "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.18.0",
     "babel-preset-es2015-loose": "^8.0.0",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.16.0",
+    "css-loader": "^0.25.0",
     "enzyme": "^2.5.1",
     "enzyme-to-json": "^1.1.5",
+    "eslint": "3.9.0",
+    "eslint-loader": "1.6.0",
+    "eslint-plugin-babel": "^3.3.0",
+    "eslint-plugin-react": "^6.4.1",
+    "extract-text-webpack-plugin": "^1.0.1",
     "jest": "^16.0.2",
+    "node-sass": "^3.10.1",
     "pretty": "^1.0.0",
-    "react-addons-test-utils": "^15.3.2",
-    "sinon": "^1.17.6",
-    "slinker": "^1.1.0",
+    "react": "^15.3.2",
     "react-addons-shallow-compare": "^15.3.2",
-    "source-map-loader": "^0.1.5"
+    "react-bootstrap": "^0.30.5",
+    "react-dom": "^15.3.2",
+    "rimraf": "^2.5.4",
+    "sass-loader": "^4.0.2",
+    "sinon": "^1.17.6",
+    "source-map-loader": "^0.1.5",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.3",
+    "yargs": "6.3.0"
   },
   "peerDependencies": {
-    "react": "^15.3.2",
-    "react-bootstrap": "^0.30.5"
+    "react": "^15.0.0",
+    "react-bootstrap": "^0.30.0",
+    "react-dom": "^15.0.0",
+    "react-addons-shallow-compare": "^15.0.0"
   },
   "dependencies": {
     "draft-js": "^0.9.1",

@@ -96,6 +96,10 @@ class TestForm extends React.Component {
 
 ~~~~
 
+### Styles
+
+Don't forget to import the style sheet: `@import '~moksa-form-components/css/styles.scss';`
+
 ### Form Elements
 
 CheckboxGroup

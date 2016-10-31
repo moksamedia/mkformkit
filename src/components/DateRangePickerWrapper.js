@@ -35,12 +35,12 @@ class DateRangePickerWrapper extends React.Component {
       };
     }
 
-    this.onDatesChange = this.onDatesChange.bind(this);
-    this.onFocusChange = this.onFocusChange.bind(this);
+    //this.onDatesChange = this.onDatesChange.bind(this);
+    //this.onFocusChange = this.onFocusChange.bind(this);
   }
 
   onDatesChange({ startDate, endDate }) {
-    this.setState({ startDate, endDate });
+    this.setState({ startDate, endDate })
     // only send update when both values are set
     if (startDate != null && endDate != null) {
       this.props.handleChange({ startDate, endDate });
@@ -58,11 +58,6 @@ class DateRangePickerWrapper extends React.Component {
     }
 
     const {
-      focusedInput,
-      startDate,
-      endDate } = this.state;
-
-    const {
       controlId,
       formGroupClass,
       formGroupId,
@@ -76,13 +71,9 @@ class DateRangePickerWrapper extends React.Component {
         <SwitchLabel {...this.props} />
         { helpBlock ? <HelpBlock>{helpBlock}</HelpBlock> : null }
         <DateRangePicker
-          id={controlId}
-          onDatesChange={this.onDatesChange}
-          onFocusChange={this.onFocusChange}
-          focusedInput={focusedInput}
-          startDate={startDate}
-          endDate={endDate}
-          {...this.props}
+          onDatesChange={::this.onDatesChange}
+          onFocusChange={::this.onFocusChange}
+          {...this.state}
         />
       </FormGroup>
     );

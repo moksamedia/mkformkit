@@ -1,0 +1,6 @@
+@import '../node_modules/react-dates/css/variables.scss';
+@import '../node_modules/react-dates/css/styles.scss';
+
+.DateRangePicker__tether--show, .DateRangePicker__picker {
+    z-index: 100;
+}
