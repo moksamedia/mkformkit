@@ -20,7 +20,7 @@ export default class MKFormAssistant {
   }
 
   // checks item from form description for valid keys and throws an error for each invalid key
-  checkFormDescriptionKeys(formItemValues) {
+  checkFormDescriptionKeys(formItemValues, formItemName) {
 
     if (this.containsOnlyValidKeys(formItemValues)) {
 
@@ -70,42 +70,69 @@ export default class MKFormAssistant {
 
     _.forIn(formDescription, (formItemValues, formItemName) => {
 
-      // make sure the form item has only valid keys
-      this.checkFormDescriptionKeys(formItemValues);
 
-      ///////////////////////////////////////
-      // Form state
 
-      formState[formItemName] = {};
+      let processFormItem = (values, name, group) => {
 
-      formState[formItemName].validationState = null;
-      formState[formItemName].validationMessage = null;
-      formState[formItemName].value = _.has(formItemValues, 'value') ? formItemValues.value : formItemValues.default;
-      formState[formItemName].visible = _.has(formItemValues, 'visible') ? formItemValues.visible : true;
+        // make sure the form item has only valid keys
+        this.checkFormDescriptionKeys(values, name);
 
-      ///////////////////////////////////////
-      // Form props
+        ///////////////////////////////////////
+        // Form state
 
-      this.formProps[formItemName] = {};
+        let isGroup = typeof group === 'string';
 
-      this.formProps[formItemName].required = _.has(formItemValues, 'required') ? formItemValues.required : false;
-      this.formProps[formItemName].handleChange =  ::this.getHandleChange(formItemName);
+        let path = isGroup == true ? group+'.'+name : name;
 
-      ///////////////////////////////////////
-      // Default values
+        _.set(formState, path, {});
 
-      this.defaultValues[formItemName] = {};
+        _.set(formState, path+'.validationState', null);
+        _.set(formState, path+'.validationMessage', null);
+        _.set(formState, path+'.value', _.has(values, 'value') ? values.value : values.default);
+        _.set(formState, path+'.visible', _.has(values, 'visible') ? values.visible : true);
 
-      this.defaultValues[formItemName] = formItemValues.default !== undefined ? formItemValues.default : null;
+        ///////////////////////////////////////
+        // Form props
 
-      ///////////////////////////////////////
-      // Callbacks
+        _.set(this.formProps, path, {});
 
-      this.callbacks[formItemName] = {};
+        _.set(this.formProps, path+'.required', _.has(values, 'required') ? values.required : false);
+        _.set(this.formProps, path+'.handleChange', ::this.getHandleChange(path));
+        _.set(this.formProps, path+'.isGroup', isGroup);
 
-      this.callbacks[formItemName].validate = formItemValues.validate !== undefined ? formItemValues.validate : null;
-      this.callbacks[formItemName].inputTransformer = formItemValues.inputTransformer !== undefined ? formItemValues.inputTransformer : null;
-      this.callbacks[formItemName].postChangeHook = formItemValues.postChangeHook !== undefined ? formItemValues.postChangeHook : null;
+        ///////////////////////////////////////
+        // Default values
+
+        _.set(this.defaultValues, path, {});
+
+        _.set(this.defaultValues, path, values.default !== undefined ? values.default : null);
+
+        ///////////////////////////////////////
+        // Callbacks
+
+        _.set(this.callbacks, path, {});
+
+        _.set(this.callbacks, path+'.validate', values.validate !== undefined ? values.validate : null);
+        _.set(this.callbacks, path+'.inputTransformer', values.inputTransformer !== undefined ? values.inputTransformer : null);
+        _.set(this.callbacks, path+'.postChangeHook', values.postChangeHook !== undefined ? values.postChangeHook : null);
+
+      };
+
+      if (_.has(formItemValues, 'isGroup') && formItemValues.isGroup) {
+
+        _.forIn(formItemValues, (subGroupValues, subGroupName) => {
+
+          if (subGroupName != 'isGroup') {
+            processFormItem(subGroupValues, subGroupName, formItemName);
+          }
+
+        });
+
+      }
+      else {
+        processFormItem(formItemValues, formItemName);
+      }
+
 
     });
 
@@ -158,19 +185,18 @@ export default class MKFormAssistant {
       let currentState = this.component.state;
 
       if (!this.formItemIsValid(currentState[key])) {
-        invalidFormItemNames += [key];
+        invalidFormItemNames.push(key);
       }
 
       if (this.formProps[key].required && !this.formItemFulfillsRequired(currentState[key],key)) {
-        invalidFormItemNames += [key];
+        invalidFormItemNames.push(key);
+        this.setValidationStateAndMessageForPath(key, 'error', 'This is required');
       }
 
     });
 
     // PACKAGE RESULTS
     let results = this.getValuesFromFormState();
-
-
 
     this.handleSubmitCallback({ success: invalidFormItemNames.length == 0, invalidFormItemNames: invalidFormItemNames}, results);
 
@@ -213,8 +239,9 @@ export default class MKFormAssistant {
   handleChange(path, e) {
 
     let value;
-    let inputTransformer = this.callbacks[path].inputTransformer;
-    let postChangeHook = this.callbacks[path].postChangeHook;
+    let callbacks = _.get(this.callbacks, path);
+    let inputTransformer = callbacks.inputTransformer;
+    let postChangeHook = callbacks.postChangeHook;
 
     // handle case where event object has been sent
     if (_.has(e, 'target.value')) {
@@ -265,7 +292,7 @@ export default class MKFormAssistant {
   // VALIDATION
 
   // validates a value for path, and sets validation state and message
-  validateChange(path, value) {
+  validateChange(path, value) {r
     let validationResult = this.validate(path, value);
     this.setValidationStateAndMessageForPath(path, validationResult.state, validationResult.message);
   }
@@ -274,8 +301,10 @@ export default class MKFormAssistant {
   // null & null for validation state and message
   validate(path, value) {
 
-    if (value && typeof this.callbacks[path].validate === 'function') {
-      return this.callbacks[path].validate(value);
+    let validateFn = _.get(this.callbacks, path).validate;
+
+    if (value && typeof validateFn === 'function') {
+      return validateFn(value);
     }
     else {
       return {state: null, message: null};

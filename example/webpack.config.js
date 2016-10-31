@@ -1,23 +1,21 @@
-var webpack = require('webpack');
-var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var path = require('path');
-var env = require('yargs').argv.mode;
+var webpack = require('webpack');
 
-var plugins = [];
-
-if (env === 'build') {
-  //plugins.push(new UglifyJsPlugin({ minimize: false }));
-}
-
-var config = {
-  entry: __dirname + '/src/index.js',
-  devtool: 'source-map',
+module.exports = {
+  entry: [
+    'webpack-dev-server/client?http://localhost:3000',
+    './src/index.jsx'
+  ],
   output: {
-    path: __dirname + '/lib',
-    filename: 'index.js',
-    library: 'mkformcomponents',
-    libraryTarget: 'commonjs2'
+    path: path.join(__dirname, 'dist'),
+    filename: 'bundle.js',
+    publicPath: '/build/'
   },
+  plugins: [
+    new webpack.SourceMapDevToolPlugin(
+      '[file].map', null,
+      "[absolute-resource-path]", "[absolute-resource-path]")
+  ],
   module: {
     loaders: [
       {
@@ -53,18 +51,5 @@ var config = {
         loader: "url?limit=10000&mimetype=application/octet-stream&name=./fonts/[hash].[ext]"
       },
     ]
-  },
-  resolve: {
-    root: path.resolve('./src'),
-    extensions: ['', '.js']
-  },
-  plugins: plugins,
-  externals: {
-    react: 'react',
-    "react-bootstrap" : 'react-bootstrap',
-    "react-dom": 'react-dom',
-    "react-addons-shallow-compare": 'react-addons-shallow-compare'
   }
-};
-
-module.exports = config;
+}

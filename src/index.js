@@ -16,5 +16,6 @@ export TagInput from './components/TagInput'
 export ValidatedFormGroup from './components/ValidatedFormGroup'
 export RequiredMarker from './components/RequiredMarker'
 export Alert from './components/Alert'
+export ContactInfo from './components/ContactInfo'
 export MKFormAssistant from './MKFormAssistant'
 

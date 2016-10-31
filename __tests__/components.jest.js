@@ -18,7 +18,7 @@ import {
   TagInput
 } from '../src';
 
-import {np
+import {
   Form,
   FormGroup,
   Button,

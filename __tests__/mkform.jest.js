@@ -56,18 +56,21 @@ let formDescription = {
       set(value.toLowerCase());
     }
   },
+
   message: {
     default: '',
     postChangeHook:(value, set) => {
       set("I'm setting the location value", 'location.value');
     }
   },
+
   other: {
     default:'',
     postChangeHook:(value, set) => {
       set(false, 'shouldShow.visible');
     }
   }
+
 };
 
 let otherState = {

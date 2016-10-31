@@ -6,7 +6,7 @@ import React from 'react';
 const RequiredMarker = ({required}) => {
   if (required) {
     return (
-      <span className="requiredControl icon-fontello-asterisk"></span>
+      <span className="requiredControl icon-asterisk"></span>
     );
   }
   else {
