@@ -26,7 +26,7 @@ class Alert extends FormAlert {
 
     return (
       <FormAlert id={controlId} bsClass={controlClass} bsStyle={style}>
-        <strong style={{paddingRight:10}}>{preMessage}</strong><span>{message}</span>
+        <strong class="alert-pre-message" style={{paddingRight:10}}>{preMessage}</strong><span>{message}</span>
       </FormAlert>
     );
 

@@ -3,25 +3,20 @@ var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var path = require('path');
 var env = require('yargs').argv.mode;
 
-var libraryName = 'mkformcomponents';
-
-var plugins = [], outputFile;
+var plugins = [];
 
 if (env === 'build') {
   //plugins.push(new UglifyJsPlugin({ minimize: false }));
 }
-
-outputFile = 'index.js';
 
 var config = {
   entry: __dirname + '/src/index.js',
   devtool: 'source-map',
   output: {
     path: __dirname + '/lib',
-    filename: outputFile,
-    library: libraryName,
-    libraryTarget: 'umd',
-    umdNamedDefine: true
+    filename: 'index.js',
+    library: 'mkformcomponents',
+    libraryTarget: 'commonjs2'
   },
   module: {
     loaders: [
@@ -45,13 +40,6 @@ var config = {
         test: /\.scss$/,
         loaders: ["style", "css", "sass"]
       }
-      /*
-      {
-        test: /(\.jsx|\.js)$/,
-        loader: "eslint-loader",
-        exclude: /node_modules/
-      }
-      */
     ]
   },
   resolve: {
