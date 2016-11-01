@@ -5,6 +5,8 @@
 import { shallow, mount, render } from 'enzyme';
 import { mountToJson } from 'enzyme-to-json';
 
+import {prettyPrintHtmlFromWrapper, simulateChange} from './testutils';
+
 import React from 'react';
 
 import {
@@ -30,7 +32,6 @@ import {
   Well
 } from '../src/components/BaseFormElements';
 
-import {prettyPrintHtmlFromWrapper} from './testutils';
 
 let formDescription = {
 
@@ -55,15 +56,36 @@ let formDescription = {
     isGroup:true,
     phone: {
       required: false,
+      validate: ContactInfo.validatePhone,
+      inputTransformer: ContactInfo.normalizePhone,
+      default: ''
     },
     email: {
       required: false,
+      validate: ContactInfo.validateEmail,
+      default: ''
     },
     name: {
       required: false,
+      default: '',
+      validate: (value) => {
+        if (value.toLowerCase() != value) {
+          return {state:'error', message:"Lowercase please!"};
+        }
+        else {
+          return {state:'success', message:null};
+        }
+      },
+      postChangeHook: (value, set, newState) => {
+        if (value == 'testme') { // completely artificial hook for testing
+          set('success');
+          set(true, 'arbitraryPath');
+        }
+      }
     },
     visibility: {
       required: false,
+      default: 'attendees'
     }
   }
 
@@ -106,8 +128,7 @@ class TestForm extends React.Component {
           <ValidatedFormGroup
             label="Name"
             placeHolder="Choose a public name for your retreat"
-            {...this.formProps.name}
-            {...this.state.name}
+            {...this.formProps.name.getMergedStateAndProps()}
           />
 
           <CheckboxGroup2Column
@@ -119,16 +140,28 @@ class TestForm extends React.Component {
               {value: "c", text: "C"},
               {value: "d", text: "D"}
             ]}
-            {...this.formProps.affiliation}
-            {...this.state.affiliation}
+            {...this.formProps.affiliation.getMergedStateAndProps()}
           />
 
           <ContactInfo
-            title="Contact 1"
+            label="Contact 1"
             identifier="contact1"
-            {...this.formProps.contact1}
-            {...this.state.contact1}
-          />
+            {...this.formProps.contact1.getMergedStateAndProps()}
+          >
+            <SelectBox
+              controlId={'contact1Visibility'}
+              label={`Decide who can see contact 1`}
+              addNotAnswered={true}
+              items={[
+                {value:"anyone", text:"Anyone. Contact info is public. (Watch our for spam)"},
+                {value:"registered", text:"Registered users with a validated email."},
+                {value:"applicantsAndAttendees", text:"Applicants and people accepted into the retreat."},
+                {value:"attendees", text:"Only people who have been accepted into the retreat."},
+                {value:"byrequest", text:"Shared by request only."},
+              ]}
+              {...this.formProps.contact1.visibility.getMergedStateAndProps()}
+            />
+          </ContactInfo>
 
         </Well>
 
@@ -156,86 +189,148 @@ describe('TestForm + FormAssistant state and props', () => {
   let testForm = wrapper.instance();
   let formAssistant = testForm.formAssistant;
 
-  it('can set up initial state from form description and other state', () => {
+  it('can set up initial state from form description', () => {
 
-    console.log(wrapper.state());
+    let formProps = testForm.formProps;
+
+    expect(formProps.name.required).toBe(true);
+    expect(formProps.affiliation.required).toBe(true);
+    expect(formProps.contact1).toBeDefined();
+    expect(formProps.contact1.isGroup).toBeTruthy();
+
+    expect(formProps.contact1.phone.required).toBeDefined();
+    expect(formProps.contact1.email.required).toBeDefined();
+    expect(formProps.contact1.name.required).toBeDefined();
+    expect(formProps.contact1.visibility.required).toBeDefined();
+
+    expect(formProps.contact1.phone.required).toBe(false);
+    expect(formProps.contact1.email.required).toBe(false);
+    expect(formProps.contact1.name.required).toBe(false);
+    expect(formProps.contact1.visibility.required).toBe(false);
+
+    expect(typeof formProps.handleSubmit === "function").toBeTruthy();
+    expect(typeof formProps.affiliation.handleChange === "function").toBeTruthy();
+    expect(typeof formProps.contact1.phone.handleChange === "function").toBeTruthy();
+    expect(typeof formProps.contact1.email.handleChange === "function").toBeTruthy();
+    expect(typeof formProps.contact1.name.handleChange === "function").toBeTruthy();
+    expect(typeof formProps.contact1.visibility.handleChange === "function").toBeTruthy();
+
+
+    expect(formAssistant.callbacks.name.validate).toBe(formDescription.name.validate);
+    expect(formAssistant.callbacks.affiliation.validate).toBeDefined();
+    expect(formAssistant.callbacks.contact1.phone.validate).toBe(ContactInfo.validatePhone);
+    expect(formAssistant.callbacks.contact1.email.validate).toBe(ContactInfo.validateEmail);
+
+    expect(formAssistant.callbacks.contact1.phone.inputTransformer).toBe(ContactInfo.normalizePhone);
+
+    expect(formAssistant.defaultValues.name).toBe("Your Name");
+
+    let state = wrapper.state();
+
+    expect(state.name.value).toBe("Your Name");
+    expect(state.affiliation.value).toBe("");
+    expect(state.contact1.name.value).toBe("");
+    expect(state.contact1.email.value).toBe("");
+    expect(state.contact1.phone.value).toBe("");
+    expect(state.contact1.visibility.value).toBe("attendees");
+
+    expect(state.name.validationState).toBe(null);
+    expect(state.affiliation.validationState).toBe(null);
+    expect(state.contact1.name.validationState).toBe(null);
+    expect(state.contact1.email.validationState).toBe(null);
+    expect(state.contact1.phone.validationState).toBe(null);
+    expect(state.contact1.visibility.validationState).toBe(null);
+
+    expect(state.name.validationMessage).toBe(null);
+    expect(state.affiliation.validationMessage).toBe(null);
+    expect(state.contact1.name.validationMessage).toBe(null);
+    expect(state.contact1.email.validationMessage).toBe(null);
+    expect(state.contact1.phone.validationMessage).toBe(null);
+    expect(state.contact1.visibility.validationMessage).toBe(null);
+
+    expect(state.name.visible).toBe(true);
+    expect(state.affiliation.visible).toBe(true);
+    expect(state.contact1.name.visible).toBe(true);
+    expect(state.contact1.email.visible).toBe(true);
+    expect(state.contact1.phone.visible).toBe(true);
+    expect(state.contact1.visibility.visible).toBe(true);
 
   });
 });
 
-    /*
-    let formProps = testForm.formProps;
+describe('TestForm + FormAssistant state and props', () => {
 
-    expect(formProps.name.required).toBe(true);
-    expect(formProps.tags.required).toBe(true);
-    expect(formProps.eventVisibility.required).toBe(false);
-    expect(formProps.affiliation.required).toBe(true);
+  const wrapper = mount(<TestForm />);
+  let testForm = wrapper.instance();
+  let formAssistant = testForm.formAssistant;
 
-    expect(typeof formProps.handleSubmit === "function").toBeTruthy();
-    expect(typeof formProps.name.handleChange === "function").toBeTruthy();
-    expect(typeof formProps.tags.handleChange === "function").toBeTruthy();
-    expect(typeof formProps.eventVisibility.handleChange === "function").toBeTruthy();
-    expect(typeof formProps.affiliation.handleChange === "function").toBeTruthy();
-
-    expect(formAssistant.callbacks.name.validate).toBe(formDescription.name.validate);
-    expect(formAssistant.callbacks.tags.validate).toBe(formDescription.tags.validate);
-    expect(formAssistant.callbacks.eventVisibility.validate).toBe(null);
-    expect(formAssistant.callbacks.affiliation.validate).toBe(null);
-
-    expect(formAssistant.defaultValues.name).toBe("Your Name");
-
-  });
-     */
-
-/*
-
- it('can change values of name', () => {
+  it('can change values of name', () => {
     formAssistant.handleChange('name', 'My Name');
     expect(wrapper.state('name').value).toEqual("My Name");
   });
 
-  it('can change values of tags', () => {
 
-    formAssistant.handleChange('tags', ['tag1', 'tag2', 'tag3']);
-    expect(wrapper.state('tags').value).toEqual(['tag1', 'tag2', 'tag3']);
+  it('can change values of group items', () => {
 
-    formAssistant.handleChange('tags', ['ABC', 'DEF']);
-    expect(wrapper.state('tags').value).toEqual(['ABC', 'DEF']);
+    formAssistant.handleChange('contact1.name', 'Anew Name');
+    expect(wrapper.state('contact1').name.value).toEqual('Anew Name');
 
-  });
+    formAssistant.handleChange('contact1.phone', '512-777-8888');
+    expect(wrapper.state('contact1').phone.value).toEqual('512-777-8888');
 
-  it('can change values of select box', () => {
+    formAssistant.handleChange('contact1.email', 'test@email.com');
+    expect(wrapper.state('contact1').email.value).toEqual('test@email.com');
 
-    expect(wrapper.state('eventVisibility').value).toEqual('notAnswered');
-
-    formAssistant.handleChange('eventVisibility', 'registered');
-    expect(wrapper.state('eventVisibility').value).toEqual('registered');
-
-    formAssistant.handleChange('eventVisibility', 'invite');
-    expect(wrapper.state('eventVisibility').value).toEqual('invite');
-  });
-
-  it('can change values of checkbox', () => {
-
-    expect(wrapper.state('affiliation').value).toBeUndefined();
-
-    formAssistant.handleChange('affiliation', ['a','b']);
-    expect(wrapper.state('affiliation').value).toEqual(['a','b']);
+    formAssistant.handleChange('contact1.visibility', 'registered');
+    expect(wrapper.state('contact1').visibility.value).toEqual('registered');
 
   });
 
-  it('can validate tags', () => {
+  it('can change values of group items', () => {
 
-    formAssistant.handleChange('tags', ['tag1']);
-    expect(wrapper.state('tags').validationState).toEqual('error');
-    expect(wrapper.state('tags').validationMessage).toEqual("Must include at least 2 tags");
+    simulateChange(wrapper.find('#contact1Name'), 'Another Name');
+    expect(wrapper.state('contact1').name.value).toEqual('Another Name');
 
-    formAssistant.handleChange('tags', ['tag1', 'tag2']);
-    expect(wrapper.state('tags').validationState).toEqual('success');
-    expect(wrapper.state('tags').validationMessage).toEqual(null);
+    simulateChange(wrapper.find('#contact1Phone'), '123-456-7890');
+    expect(wrapper.state('contact1').phone.value).toEqual('123-456-7890');
+
+    simulateChange(wrapper.find('#contact1Email'), 'bob@bob.com');
+    expect(wrapper.state('contact1').email.value).toEqual('bob@bob.com');
+
+    simulateChange(wrapper.find('#contact1Visibility'), 'notarealvalue');
+    expect(wrapper.state('contact1').visibility.value).toEqual('notarealvalue');
 
   });
-  
+
+  it('can validate values of group items', () => {
+
+    simulateChange(wrapper.find('#contact1Name'), 'Abc Def');
+    expect(wrapper.state('contact1').name.value).toEqual('Abc Def');
+    expect(wrapper.state('contact1').name.validationState).toEqual('error');
+    expect(wrapper.state('contact1').name.validationMessage).toEqual('Lowercase please!');
+
+    simulateChange(wrapper.find('#contact1Name'), 'abc def');
+    expect(wrapper.state('contact1').name.value).toEqual('abc def');
+    expect(wrapper.state('contact1').name.validationState).toEqual('success');
+    expect(wrapper.state('contact1').name.validationMessage).toEqual(null);
+
+  });
+
+
+  it('can transform input of group items', () => {
+
+    simulateChange(wrapper.find('#contact1Phone'), '1234567890');
+    expect(wrapper.state('contact1').phone.value).toEqual('123-456-7890');
+    expect(wrapper.state('contact1').phone.validationState).toEqual('success');
+    expect(wrapper.state('contact1').phone.validationMessage).toEqual(null);
+
+  });
+
+  it('can transform input of group items', () => {
+
+    simulateChange(wrapper.find('#contact1Name'), 'testme');
+    expect(wrapper.state('contact1').name.value).toEqual('success');
+    expect(wrapper.state('arbitraryPath')).toEqual(true);
+
+  });
 });
-
-  */

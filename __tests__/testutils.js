@@ -19,3 +19,7 @@ exports.prettyPrintHtmlFromWrapper = (wrapper, strip = true) => {
     console.log(pretty(wrapper.html()));
   }
 };
+
+exports.simulateChange = (component, value) => {
+  component.simulate('change', {target: {value: value}});
+};

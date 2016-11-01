@@ -225,7 +225,7 @@ describe('TestForm + FormAssistant state and props', () => {
 
   it('can change values of checkbox', () => {
 
-    expect(wrapper.state('affiliation').value).toBeUndefined();
+    expect(wrapper.state('affiliation').value).toBe("");
 
     formAssistant.handleChange('affiliation', ['a','b']);
     expect(wrapper.state('affiliation').value).toEqual(['a','b']);

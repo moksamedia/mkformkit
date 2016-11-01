@@ -58,7 +58,10 @@ const ValidatedFormGroup = (props) => {
     preAddOn,
     postAddOn,
     controlStyle,
-    visible
+    visible,
+    controlId,
+    formGroupClass,
+    formGroupId
   } = props;
 
   if (!visible) {

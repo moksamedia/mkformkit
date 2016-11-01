@@ -102,7 +102,7 @@ class TestForm extends React.Component {
           <ValidatedFormGroup
             label="Name"
             placeHolder="Choose a public name for your retreat"
-            {..._.merge({}, this.formProps.name, this.state.name)}
+            {...this.formProps.name.getMergedStateAndProps()}
           />
 
           <CheckboxGroup2Column
@@ -114,14 +114,28 @@ class TestForm extends React.Component {
               {value: "c", text: "C"},
               {value: "d", text: "D"}
             ]}
-            {..._.merge({}, this.formProps.affiliation, this.state.affiliation)}
+            {...this.formProps.affiliation.getMergedStateAndProps()}
           />
 
           <ContactInfo
-            title="Contact 1"
+            label="Contact 1"
             identifier="contact1"
-            {..._.merge({}, this.formProps.contact1, this.state.contact1)}
-          />
+            {...this.formProps.contact1.getMergedStateAndProps()}
+          >
+            <SelectBox
+              controlId={'contact1Visibility'}
+              label={`Decide who can see contact 1`}
+              addNotAnswered={true}
+              items={[
+                {value:"anyone", text:"Anyone. Contact info is public. (Watch our for spam)"},
+                {value:"registered", text:"Registered users with a validated email."},
+                {value:"applicantsAndAttendees", text:"Applicants and people accepted into the retreat."},
+                {value:"attendees", text:"Only people who have been accepted into the retreat."},
+                {value:"byrequest", text:"Shared by request only."},
+              ]}
+              {...this.formProps.contact1.visibility.getMergedStateAndProps()}
+            />
+          </ContactInfo>
 
         </Well>
 

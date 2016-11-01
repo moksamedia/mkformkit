@@ -88,7 +88,8 @@ export default class MKFormAssistant {
 
         _.set(formState, path+'.validationState', null);
         _.set(formState, path+'.validationMessage', null);
-        _.set(formState, path+'.value', _.has(values, 'value') ? values.value : values.default);
+        // if value is defined, set item.value to that, otherwise use default if it's defined, otherwise use ''
+        _.set(formState, path+'.value', _.has(values, 'value') ? values.value : typeof values.default !== 'undefined' ? values.default : '');
         _.set(formState, path+'.visible', _.has(values, 'visible') ? values.visible : true);
 
         ///////////////////////////////////////
@@ -98,7 +99,9 @@ export default class MKFormAssistant {
 
         _.set(this.formProps, path+'.required', _.has(values, 'required') ? values.required : false);
         _.set(this.formProps, path+'.handleChange', ::this.getHandleChange(path));
-        _.set(this.formProps, path+'.isGroup', isGroup);
+        _.set(this.formProps, path+'.getMergedStateAndProps', () => {
+            return _.merge({}, _.get(this.formProps, path), _.get(component.state, path));
+          });
 
         ///////////////////////////////////////
         // Default values
@@ -126,7 +129,13 @@ export default class MKFormAssistant {
             processFormItem(subGroupValues, subGroupName, formItemName);
           }
 
+          _.set(this.formProps, formItemName+'.getMergedStateAndProps', () => {
+            return _.merge({}, _.get(this.formProps, formItemName), _.get(component.state, formItemName));
+          });
+
         });
+
+        _.set(this.formProps, formItemName+'.isGroup', formItemValues.isGroup);
 
       }
       else {
@@ -149,6 +158,7 @@ export default class MKFormAssistant {
     component.state = formState;
     component.formProps = this.formProps;
 
+    this._initialFormState = formState;
   }
 
   ///////////////////////////////////////
@@ -292,7 +302,7 @@ export default class MKFormAssistant {
   // VALIDATION
 
   // validates a value for path, and sets validation state and message
-  validateChange(path, value) {r
+  validateChange(path, value) {
     let validationResult = this.validate(path, value);
     this.setValidationStateAndMessageForPath(path, validationResult.state, validationResult.message);
   }
