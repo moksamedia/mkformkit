@@ -11,7 +11,7 @@
   },
   "scripts": {
     "jest": "jest --no-cache  --verbose",
-    "build": "rimraf lib && npm run build:css && webpack --mode=build",
+    "build": "rimraf lib && webpack --mode=build",
     "build:css": "node-sass css/styles.scss lib/styles.css"
   },
   "license": "ISC",

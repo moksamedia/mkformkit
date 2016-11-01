@@ -2,6 +2,8 @@
  * Created by cantgetnosleep on 10/25/16.
  */
 
+require('../css/styles.scss');
+
 export CheckboxGroup from './components/CheckboxGroup'
 export CheckboxGroup2Column from './components/CheckboxGroup2Column'
 export DateRangePickerWrapper from './components/DateRangePickerWrapper'
